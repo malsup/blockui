@@ -19,6 +19,8 @@ if (/1\.(0|1|2)\.(0|1|2)/.test($.fn.jquery) || /^1.1/.test($.fn.jquery)) {
     return;
 }
 
+$.fn._fadeIn = $.fn.fadeIn;
+
 // global $ methods for blocking/unblocking the entire page
 $.blockUI   = function(opts) { install(window, opts); };
 $.unblockUI = function(opts) { remove(window, opts); };
@@ -248,17 +250,15 @@ function install(el, opts) {
 			$(msg).show();
 	}
 
+	if ($.browser.msie && opts.showOverlay)
+		lyr1.show(); // opacity is zero
 	if (opts.fadeIn) {
-		if ($.browser.msie && opts.showOverlay)
-			lyr1.show();
 		if (opts.showOverlay)
-			lyr2.fadeIn(opts.fadeIn);
+			lyr2._fadeIn(opts.fadeIn);
 		if (msg)
 			lyr3.fadeIn(opts.fadeIn);
 	}
 	else {
-		if ($.browser.msie && opts.showOverlay)
-			lyr1.show();
 		if (opts.showOverlay)
 			lyr2.show();
 		if (msg)
@@ -279,16 +279,23 @@ function install(el, opts) {
 
 	if (opts.timeout) {
 		// auto-unblock
-		setTimeout(function() {
+		var to = setTimeout(function() {
 			full ? $.unblockUI(opts) : $(el).unblock(opts);
 		}, opts.timeout);
+		$(el).data('blockUI.timeout', to);
 	}
 };
 
 // remove the block
 function remove(el, opts) {
     var full = el == window;
-    var data = $(el).data('blockUI.history');
+	var $el = $(el);
+    var data = $el.data('blockUI.history');
+	var to = $el.data('blockUI.timeout');
+	if (to) {
+		clearTimeout(to);
+		$el.removeData('blockUI.timeout');
+	}
     opts = $.extend({}, $.blockUI.defaults, opts || {});
     bind(0, el, opts); // unbind events
     var els = full ? $('body').children().filter('.blockUI') : $('.blockUI', el);
