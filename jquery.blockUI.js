@@ -1,6 +1,6 @@
 ﻿/*
  * jQuery blockUI plugin
- * Version 2.15 (1-MAR-2009)
+ * Version 2.16 (20-MAR-2009)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -56,7 +56,7 @@ $.fn.unblock = function(opts) {
     });
 };
 
-$.blockUI.version = 2.14; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.16; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -206,8 +206,8 @@ function install(el, opts) {
     $([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
 
     // ie7 must use absolute positioning in quirks mode and to account for activex issues (when scrolling)
-    var expr = $.browser.msie && (!$.boxModel || $('object,embed', full ? null : el).length > 0);
-    if (ie6 || expr && lyr3[0].style.setExpression) {
+    var expr = $.browser.msie && ($.browser.version < 8 || !$.boxModel) && (!$.boxModel || $('object,embed', full ? null : el).length > 0);
+    if (ie6 || (expr && lyr3[0].style.setExpression)) {
         // give body 100% height
         if (full && opts.allowBodyStretch && $.boxModel)
             $('html,body').css('height','100%');
