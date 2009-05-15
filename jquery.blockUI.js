@@ -1,6 +1,6 @@
 ﻿/*
  * jQuery blockUI plugin
- * Version 2.17 (14-APR-2009)
+ * Version 2.18 (29-APR-2009)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -20,6 +20,15 @@ if (/1\.(0|1|2)\.(0|1|2)/.test($.fn.jquery) || /^1.1/.test($.fn.jquery)) {
 }
 
 $.fn._fadeIn = $.fn.fadeIn;
+
+var setExpr = (function() {
+	if (!$.browser.msie) return false;
+    var div = document.createElement('div');
+    try { div.style.setExpression('width','0+0'); }
+    catch(e) { return false; }
+    return true;
+})();
+
 
 // global $ methods for blocking/unblocking the entire page
 $.blockUI   = function(opts) { install(window, opts); };
@@ -56,7 +65,7 @@ $.fn.unblock = function(opts) {
     });
 };
 
-$.blockUI.version = 2.16; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.18; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -101,7 +110,12 @@ $.blockUI.defaults = {
 	    '-moz-border-radius':    '10px'
 	},
 	
-	iframeSrc: 'javascript:false', // 'about:blank' fails on HTTPS
+	// IE issues: 'about:blank' fails on HTTPS and javascript:false is s-l-o-w
+	// (hat tip to Jorge H. N. de Vasconcelos)
+	iframeSrc: /^https/i.test(window.location.href || '') ? 'javascript:false' : 'about:blank',
+
+	// force usage of iframe in non-IE browsers (handy for blocking applets)
+	forceIframe: false,
 
     // z-index for the blocking overlay
     baseZ: 1000,
@@ -114,7 +128,11 @@ $.blockUI.defaults = {
     // on "short" pages.  disable if you wish to prevent changes to the body height
     allowBodyStretch: true,
 
-    // be default blockUI will supress tab navigation from leaving blocking content;
+	// enable if you want key and mouse events to be disabled for content that is blocked
+	bindEvents: true,
+
+    // be default blockUI will supress tab navigation from leaving blocking content
+    // (if bindEvents is true)
     constrainTabKey: true,
 
     // fadeIn time in millis; set to 0 to disable fadeIn on block
@@ -186,8 +204,9 @@ function install(el, opts) {
     // layer2 is the overlay layer which has opacity and a wait cursor
     // layer3 is the message content that is displayed while blocking
 
-    var lyr1 = ($.browser.msie) ? $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>')
-                                : $('<div class="blockUI" style="display:none"></div>');
+    var lyr1 = ($.browser.msie || opts.forceIframe) 
+    	? $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>')
+        : $('<div class="blockUI" style="display:none"></div>');
     var lyr2 = $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;cursor:wait;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
     var lyr3 = full ? $('<div class="blockUI blockMsg blockPage" style="z-index:'+z+';display:none;position:fixed"></div>')
                     : $('<div class="blockUI blockMsg blockElement" style="z-index:'+z+';display:none;position:absolute"></div>');
@@ -202,14 +221,14 @@ function install(el, opts) {
     lyr2.css('position', full ? 'fixed' : 'absolute');
 
     // make iframe layer transparent in IE
-    if ($.browser.msie)
+    if ($.browser.msie || opts.forceIframe)
         lyr1.css('opacity','0.0');
 
     $([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
 
     // ie7 must use absolute positioning in quirks mode and to account for activex issues (when scrolling)
     var expr = $.browser.msie && ($.browser.version < 8 || !$.boxModel) && (!$.boxModel || $('object,embed', full ? null : el).length > 0);
-    if (ie6 || (expr && lyr3[0].style.setExpression)) {
+    if (ie6 || (expr && setExpr)) {
         // give body 100% height
         if (full && opts.allowBodyStretch && $.boxModel)
             $('html,body').css('height','100%');
@@ -252,7 +271,7 @@ function install(el, opts) {
 			$(msg).show();
 	}
 
-	if ($.browser.msie && opts.showOverlay)
+	if (($.browser.msie || opts.forceIframe) && opts.showOverlay)
 		lyr1.show(); // opacity is zero
 	if (opts.fadeIn) {
 		if (opts.showOverlay)
@@ -343,7 +362,8 @@ function bind(b, el, opts) {
     if (!full)
         $el.data('blockUI.isBlocked', b);
 
-    if (b && !opts.showOverlay) // don't prevent events when overlay not in use
+	// don't bind events when overlay is not in use or if bindEvents is false
+    if (!opts.bindEvents || (b && !opts.showOverlay)) 
 		return;
 
     // bind anchors and inputs for mouse and key events
