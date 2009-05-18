@@ -1,6 +1,6 @@
 ﻿/*
  * jQuery blockUI plugin
- * Version 2.18 (29-APR-2009)
+ * Version 2.19 (18-MAY-2009)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -35,7 +35,7 @@ $.blockUI   = function(opts) { install(window, opts); };
 $.unblockUI = function(opts) { remove(window, opts); };
 
 // convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
-$.growlUI = function(title, message, timeout) {
+$.growlUI = function(title, message, timeout, onClose) {
 	var $m = $('<div class="growlUI"></div>');
 	if (title) $m.append('<h1>'+title+'</h1>');
 	if (message) $m.append('<h2>'+message+'</h2>');
@@ -43,6 +43,7 @@ $.growlUI = function(title, message, timeout) {
     $.blockUI({
 		message: $m, fadeIn: 700, fadeOut: 1000, centerY: false,
 		timeout: timeout, showOverlay: false,
+		onUnblock: onClose, 
 		css: $.blockUI.defaults.growlCSS
     });
 };
@@ -91,7 +92,7 @@ $.blockUI.defaults = {
     // styles for the overlay
     overlayCSS:  {
         backgroundColor: '#000',
-        opacity:         '0.6'
+        opacity:          0.6
     },
 
 	// styles applied when using $.growlUI
@@ -102,7 +103,7 @@ $.blockUI.defaults = {
 		right:    '10px',
 	    border:   'none',
 	    padding:  '5px',
-	    opacity:  '0.6',
+	    opacity:   0.6,
 		cursor:    null,
 	    color:    '#fff',
 	    backgroundColor: '#000',
@@ -222,7 +223,7 @@ function install(el, opts) {
 
     // make iframe layer transparent in IE
     if ($.browser.msie || opts.forceIframe)
-        lyr1.css('opacity','0.0');
+        lyr1.css('opacity',0.0);
 
     $([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
 
