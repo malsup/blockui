@@ -1,6 +1,6 @@
 ﻿/*
  * jQuery blockUI plugin
- * Version 2.19 (18-MAY-2009)
+ * Version 2.20 (19-MAY-2009)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -66,7 +66,7 @@ $.fn.unblock = function(opts) {
     });
 };
 
-$.blockUI.version = 2.18; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.20; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -92,7 +92,8 @@ $.blockUI.defaults = {
     // styles for the overlay
     overlayCSS:  {
         backgroundColor: '#000',
-        opacity:          0.6
+        opacity:          0.6,
+        cursor:          'wait'
     },
 
 	// styles applied when using $.growlUI
@@ -202,13 +203,13 @@ function install(el, opts) {
 
     // blockUI uses 3 layers for blocking, for simplicity they are all used on every platform;
     // layer1 is the iframe layer which is used to supress bleed through of underlying content
-    // layer2 is the overlay layer which has opacity and a wait cursor
+    // layer2 is the overlay layer which has opacity and a wait cursor (by default)
     // layer3 is the message content that is displayed while blocking
 
     var lyr1 = ($.browser.msie || opts.forceIframe) 
     	? $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>')
         : $('<div class="blockUI" style="display:none"></div>');
-    var lyr2 = $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;cursor:wait;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
+    var lyr2 = $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
     var lyr3 = full ? $('<div class="blockUI blockMsg blockPage" style="z-index:'+z+';display:none;position:fixed"></div>')
                     : $('<div class="blockUI blockMsg blockElement" style="z-index:'+z+';display:none;position:absolute"></div>');
 
