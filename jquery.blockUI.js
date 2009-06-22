@@ -1,6 +1,6 @@
 ﻿/*
  * jQuery blockUI plugin
- * Version 2.20 (19-MAY-2009)
+ * Version 2.23 (21-JUN-2009)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -21,14 +21,11 @@ if (/1\.(0|1|2)\.(0|1|2)/.test($.fn.jquery) || /^1.1/.test($.fn.jquery)) {
 
 $.fn._fadeIn = $.fn.fadeIn;
 
-var setExpr = (function() {
-	if (!$.browser.msie) return false;
-    var div = document.createElement('div');
-    try { div.style.setExpression('width','0+0'); }
-    catch(e) { return false; }
-    return true;
-})();
-
+// this bit is to ensure we don't call setExpression when we shouldn't (with extra muscle to handle
+// retarded userAgent strings on Vista)
+var mode = document.documentMode || 0;
+var setExpr = $.browser.msie && (($.browser.version < 8 && !mode) || mode < 8);
+var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent) && !mode;
 
 // global $ methods for blocking/unblocking the entire page
 $.blockUI   = function(opts) { install(window, opts); };
@@ -66,7 +63,7 @@ $.fn.unblock = function(opts) {
     });
 };
 
-$.blockUI.version = 2.20; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.23; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -168,7 +165,6 @@ $.blockUI.defaults = {
 
 // private data and functions follow...
 
-var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent);
 var pageBlock = null;
 var pageBlockEls = [];
 
@@ -229,8 +225,8 @@ function install(el, opts) {
     $([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
 
     // ie7 must use absolute positioning in quirks mode and to account for activex issues (when scrolling)
-    var expr = $.browser.msie && ($.browser.version < 8 || !$.boxModel) && (!$.boxModel || $('object,embed', full ? null : el).length > 0);
-    if (ie6 || (expr && setExpr)) {
+    var expr = setExpr && (!$.boxModel || $('object,embed', full ? null : el).length > 0);
+    if (ie6 || expr) {
         // give body 100% height
         if (full && opts.allowBodyStretch && $.boxModel)
             $('html,body').css('height','100%');
