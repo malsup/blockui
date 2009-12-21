@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.26 (09-SEP-2009)
+ * Version 2.29 (10-DEC-2009)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -63,7 +63,7 @@ $.fn.unblock = function(opts) {
 	});
 };
 
-$.blockUI.version = 2.26; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.29; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -252,7 +252,11 @@ function install(el, opts) {
 	if ($.browser.msie || opts.forceIframe)
 		lyr1.css('opacity',0.0);
 
-	$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
+	//$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
+	var layers = [lyr1,lyr2,lyr3], $par = full ? $('body') : $(el);
+	$.each(layers, function() {
+		this.appendTo($par);
+	});
 	
 	if (opts.theme && opts.draggable && $.fn.draggable) {
 		lyr3.draggable({
@@ -315,7 +319,7 @@ function install(el, opts) {
 		if (opts.showOverlay)
 			lyr2._fadeIn(opts.fadeIn);
 		if (msg)
-			lyr3.fadeIn(opts.fadeIn);
+			lyr3._fadeIn(opts.fadeIn);
 	}
 	else {
 		if (opts.showOverlay)
@@ -388,7 +392,7 @@ function reset(els,data,opts,el) {
 		data.el.style.position = data.position;
 		if (data.parent)
 			data.parent.appendChild(data.el);
-		$(data.el).removeData('blockUI.history');
+		$(el).removeData('blockUI.history');
 	}
 
 	if (typeof opts.onUnblock == 'function')
