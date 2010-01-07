@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.30 (06-JAN-2010)
+ * Version 2.31 (06-JAN-2010)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -65,7 +65,7 @@ $.fn.unblock = function(opts) {
 	});
 };
 
-$.blockUI.version = 2.30; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.31; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -334,6 +334,8 @@ function install(el, opts) {
 			lyr2.show();
 		if (msg)
 			lyr3.show();
+		if (opts.onBlock)
+			opts.onBlock();
 	}
 
 	// bind key and mouse events
