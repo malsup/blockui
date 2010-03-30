@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.32 (29-MAR-2010)
+ * Version 2.33 (29-MAR-2010)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -65,7 +65,7 @@ $.fn.unblock = function(opts) {
 	});
 };
 
-$.blockUI.version = 2.32; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.33; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -120,7 +120,8 @@ $.blockUI.defaults = {
 		color:		'#fff',
 		backgroundColor: '#000',
 		'-webkit-border-radius': '10px',
-		'-moz-border-radius':	 '10px'
+		'-moz-border-radius':	 '10px',
+		'border-radius': 		 '10px'
 	},
 	
 	// IE issues: 'about:blank' fails on HTTPS and javascript:false is s-l-o-w
