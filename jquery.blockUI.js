@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.31 (06-JAN-2010)
+ * Version 2.32 (29-MAR-2010)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -65,7 +65,7 @@ $.fn.unblock = function(opts) {
 	});
 };
 
-$.blockUI.version = 2.31; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.32; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -225,18 +225,26 @@ function install(el, opts) {
 		: $('<div class="blockUI" style="display:none"></div>');
 	var lyr2 = $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
 	
-	var lyr3;
+	var lyr3, s;
 	if (opts.theme && full) {
-		var s = '<div class="blockUI blockMsg blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:fixed">' +
-					'<div class="ui-widget-header ui-dialog-titlebar blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
-					'<div class="ui-widget-content ui-dialog-content"></div>' +
-				'</div>';
-		lyr3 = $(s);
+		s = '<div class="blockUI blockMsg blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:fixed">' +
+				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
+				'<div class="ui-widget-content ui-dialog-content"></div>' +
+			'</div>';
 	}
+	else if (opts.theme) {
+		s = '<div class="blockUI blockMsg blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:absolute">' +
+				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
+				'<div class="ui-widget-content ui-dialog-content"></div>' +
+			'</div>';
+	}
+	else if (full) {
+		s = '<div class="blockUI blockMsg blockPage" style="z-index:'+z+';display:none;position:fixed"></div>';
+	}			
 	else {
-		lyr3 = full ? $('<div class="blockUI blockMsg blockPage" style="z-index:'+z+';display:none;position:fixed"></div>')
-					: $('<div class="blockUI blockMsg blockElement" style="z-index:'+z+';display:none;position:absolute"></div>');
-	}						   
+		s = '<div class="blockUI blockMsg blockElement" style="z-index:'+z+';display:none;position:absolute"></div>';
+	}
+	lyr3 = $(s);
 
 	// if we have a message, style it
 	if (msg) {
