@@ -434,7 +434,7 @@
                     button.button();
                 }
                 if (!options.theme) {
-                    button.css('float','right').css('margin','3px').css('padding','1px 3px');
+                    button.css('float', 'right').css('margin', '3px').css('padding', '1px 3px');
                 }
             });
             buttonPane.appendTo(el);
@@ -533,8 +533,7 @@
                     remove(e.target.parent, e.data);
                 }
             }
-        }
-        if (e.button > 0) {
+        } else if (e.button >= 0) {
             if (e.data.closeOnClick) {
                 remove(e.target.parent, e.data);
             }
