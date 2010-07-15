@@ -12,7 +12,7 @@
 * Thanks to Amir-Hossein Sobhi for some excellent contributions!
 *
 *
-* Adjust center function to take a possible iframe in to account
+* Adjust center function to take a possible iframe into account
 * Add closeOnEscape option
 * separated the 'building blocks' iframe, overlay, messageblock from the other logic => easier to extend in the future
 * Add closeOnClick option
@@ -209,6 +209,9 @@
 
             return $('<div class="blockUI blockOverlay" style="z-index:' + zindex + ';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
         },
+        _messageBlock: function(zindex, options){
+             return messageBlock(zindex, options);
+        },
         messageBlock: function(zindex, options) {
             var opts = $.extend({}, $.blockUI.defaults, options);
 
@@ -226,10 +229,10 @@
 			'</div>';
             }
             else if (opts.full) {
-                message = '<div class="blockUI blockMsg blockPage" style="z-index:' + zindex + ';display:none;position:fixed"></div>';
+                message = '<div class="blockUI blockMsg blockPage msgContent" style="z-index:' + zindex + ';display:none;position:fixed"></div>';
             }
             else {
-                message = '<div class="blockUI blockMsg blockElement" style="z-index:' + zindex + ';display:none;position:absolute"></div>';
+                message = '<div class="blockUI blockMsg blockElement msgContent" style="z-index:' + zindex + ';display:none;position:absolute"></div>';
             }
 
             return $(message);
@@ -284,7 +287,7 @@
         var lyr1 = $.blockUI.iframe(z++, opts);
         var lyr2 = $.blockUI.overlay(z++, opts);
         opts = $.extend({}, opts, { full: full });
-        var lyr3 = $.blockUI.messageBlock(z, opts);
+        var lyr3 = $.blockUI._messageBlock(z, opts);
 
         // if we have a message, style it
         if (msg) {
@@ -361,7 +364,7 @@
             if (opts.theme)
                 lyr3.find('.ui-widget-content').append(msg);
             else
-                lyr3.append(msg);
+                lyr3.find('.msgContent').append(msg);
             if (msg.jquery || msg.nodeType)
                 $(msg).show();
         }
