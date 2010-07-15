@@ -15,6 +15,8 @@
 * Adjust center function to take a possible iframe in to account
 * Add closeOnEscape option
 * separated the 'building blocks' iframe, overlay, messageblock from the other logic => easier to extend in the future
+* Add closeOnClick option
+* Add buttons option => created a buttonPane like in ui-dialog
 */
 
 ; (function($) {
@@ -187,9 +189,11 @@
             quirksmodeOffsetHack: 4,
 
             closeOnEscape: false,
+            closeOnClick: false,
             keyCode: { ALT: 18, BACKSPACE: 8, CAPS_LOCK: 20, COMMA: 188, COMMAND: 91, COMMAND_LEFT: 91, COMMAND_RIGHT: 93, CONTROL: 17, DELETE: 46, DOWN: 40, END: 35, ENTER: 13, ESCAPE: 27, HOME: 36, INSERT: 45, LEFT: 37, MENU: 93, NUMPAD_ADD: 107, NUMPAD_DECIMAL: 110, NUMPAD_DIVIDE: 111, NUMPAD_ENTER: 108,
                 NUMPAD_MULTIPLY: 106, NUMPAD_SUBTRACT: 109, PAGE_DOWN: 34, PAGE_UP: 33, PERIOD: 190, RIGHT: 39, SHIFT: 16, SPACE: 32, TAB: 9, UP: 38, WINDOWS: 91
-            }
+            },
+            buttons: {} // ex: buttons: { Ok: function() { $.unblockUI(); } }
         },
 
         //blockUI building blocks
@@ -205,7 +209,7 @@
 
             return $('<div class="blockUI blockOverlay" style="z-index:' + zindex + ';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
         },
-        message: function(zindex, options) {
+        messageBlock: function(zindex, options) {
             var opts = $.extend({}, $.blockUI.defaults, options);
 
             var message;
@@ -280,7 +284,7 @@
         var lyr1 = $.blockUI.iframe(z++, opts);
         var lyr2 = $.blockUI.overlay(z++, opts);
         opts = $.extend({}, opts, { full: full });
-        var lyr3 = $.blockUI.message(z, opts);
+        var lyr3 = $.blockUI.messageBlock(z, opts);
 
         // if we have a message, style it
         if (msg) {
@@ -362,6 +366,10 @@
                 $(msg).show();
         }
 
+        if (opts.buttons) {
+            createButtons(lyr3, opts.buttons, opts);
+        }
+
         if (($.browser.msie || opts.forceIframe) && opts.showOverlay)
             lyr1.show(); // opacity is zero
         if (opts.fadeIn) {
@@ -400,6 +408,36 @@
                 full ? $.unblockUI(opts) : $(el).unblock(opts);
             }, opts.timeout);
             $(el).data('blockUI.timeout', to);
+        }
+    };
+
+
+    function createButtons(el, buttons, options) {
+        var hasButtons = false,
+            buttonPane = $('<div></div>');
+
+        if (options.theme) {
+            buttonPane.addClass('ui-dialog-buttonpane ' + 'ui-widget-content ' + 'ui-helper-clearfix');
+            // if we already have a button pane, remove it
+            el.find('.ui-dialog-buttonpane').remove();
+        }
+
+        if (typeof buttons === 'object' && buttons !== null) {
+            $.each(buttons, function() {
+                return !(hasButtons = true);
+            });
+        }
+        if (hasButtons) {
+            $.each(buttons, function(name, fn) {
+                var button = $('<button type="button"></button>').text(name).click(function() { fn.apply(el[0], arguments); }).appendTo(buttonPane);
+                if ($.fn.button) {
+                    button.button();
+                }
+                if (!options.theme) {
+                    button.css('float','right').css('margin','3px').css('padding','1px 3px');
+                }
+            });
+            buttonPane.appendTo(el);
         }
     };
 
@@ -494,6 +532,11 @@
                 if (e.data.closeOnEscape) {
                     remove(e.target.parent, e.data);
                 }
+            }
+        }
+        if (e.button > 0) {
+            if (e.data.closeOnClick) {
+                remove(e.target.parent, e.data);
             }
         }
         // allow events within the message content
