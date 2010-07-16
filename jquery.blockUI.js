@@ -11,12 +11,15 @@
 *
 * Thanks to Amir-Hossein Sobhi for some excellent contributions!
 *
-*
+* 
 * Adjust center function to take a possible iframe into account
 * Add closeOnEscape option
 * separated the 'building blocks' iframe, overlay, messageblock from the other logic => easier to extend in the future
 * Add closeOnClick option
 * Add buttons option => created a buttonPane like in ui-dialog
+*
+* Add optional blockUI extention (see end of file)
+*   blockMessageType: default or exception
 */
 
 ; (function($) {
@@ -209,8 +212,8 @@
 
             return $('<div class="blockUI blockOverlay" style="z-index:' + zindex + ';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
         },
-        _messageBlock: function(zindex, options){ //this function is used to hook into the messageBlock generation when creating an extention for the messageBlock
-             return this.messageBlock(zindex, options);
+        _messageBlock: function(zindex, options) { //this function is used to hook into the messageBlock generation when creating an extention for the messageBlock
+            return this.messageBlock(zindex, options);
         },
         messageBlock: function(zindex, options) {
             var opts = $.extend({}, $.blockUI.defaults, options);
@@ -235,7 +238,30 @@
                 message = '<div class="blockUI blockMsg blockElement msgContent" style="z-index:' + zindex + ';display:none;position:absolute"></div>';
             }
 
-            return $(message);
+            var messageblock = $(message);
+            // if we have a message, style it
+            if (opts.message) {
+                if (opts.theme) {
+                    messageblock.css(opts.themedCSS);
+                    messageblock.addClass('ui-widget-content');
+                }
+                else
+                    messageblock.css(opts.css);
+
+                // show the message
+                if (opts.theme)
+                    messageblock.find('.ui-widget-content').append(opts.message);
+                else {
+                    var msgTarget = messageblock.find('.msgContent');
+                    if (msgTarget.length > 0)
+                        msgTarget.append(opts.message);
+                    else messageblock.append(opts.message);
+                }
+                if (opts.message.jquery || opts.message.nodeType)
+                    $(opts.message).show();
+            }
+
+            return messageblock;
         }
     });
 
@@ -254,8 +280,8 @@
         var msg = opts && opts.message !== undefined ? opts.message : undefined;
         opts = $.extend({}, $.blockUI.defaults, opts || {});
         opts.overlayCSS = $.extend({}, $.blockUI.defaults.overlayCSS, opts.overlayCSS || {});
-        var css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
-        var themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
+        opts.css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
+        opts.themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
         msg = msg === undefined ? opts.message : msg;
 
         // remove the current block (if there is one)
@@ -289,14 +315,9 @@
         opts = $.extend({}, opts, { full: full });
         var lyr3 = $.blockUI._messageBlock(z, opts);
 
-        // if we have a message, style it
-        if (msg) {
-            if (opts.theme) {
-                lyr3.css(themedCSS);
-                lyr3.addClass('ui-widget-content');
-            }
-            else
-                lyr3.css(css);
+        //create buttons
+        if (opts.buttons) {
+            createButtons(lyr3, opts.buttons, opts);
         }
 
         // style the overlay
@@ -357,20 +378,6 @@
                     s.setExpression('top', expression);
                 }
             });
-        }
-
-        // show the message
-        if (msg) {
-            if (opts.theme)
-                lyr3.find('.ui-widget-content').append(msg);
-            else
-                lyr3.find('.msgContent').append(msg);
-            if (msg.jquery || msg.nodeType)
-                $(msg).show();
-        }
-
-        if (opts.buttons) {
-            createButtons(lyr3, opts.buttons, opts);
         }
 
         if (($.browser.msie || opts.forceIframe) && opts.showOverlay)
@@ -611,5 +618,35 @@
     function sz(el, p) {
         return parseInt($.css(el, p)) || 0;
     };
+
+
+    //optional extentions on blockUI
+    $.extend($.blockUI, {
+        defaults: $.extend({}, {
+            messageBlockType: 'default', //specify the type of the messageBlock. default or exception (for the moment)
+            source: null,
+            stacktrace: null
+        }, $.blockUI.defaults),
+
+        _messageBlock: function(zindex, options) {
+            switch (options.messageBlockType.toLowerCase()) {
+                case 'exception':
+                    $.extend(options, {
+                        message: "<br/>" + options.message + "<br/><br/>",
+                        buttons: { Ok: function() { $.unblockUI(); } },
+                        theme: true,
+                        closeOnEscape: true
+                    });
+                    return this.messageBlock(zindex, options);
+                    break;
+                default:
+                    return this.messageBlock(zindex, options);
+                    break;
+            }
+        }
+    });
+
+
+
 
 })(jQuery);
