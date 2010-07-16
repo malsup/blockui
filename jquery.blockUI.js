@@ -637,7 +637,17 @@
                         theme: true,
                         closeOnEscape: true
                     });
-                    return this.messageBlock(zindex, options);
+
+                    var exceptionMessage = this.messageBlock(zindex, options);
+
+                    if (options.stacktrace) {
+                        var stackElement = $("<textarea rows='10' readonly='true' style='width:94%;padding:10px;'>" + options.stacktrace + "</textarea>").hide();
+                        var stackTitle = $("<p class='ui-widget-content ui-dialog-content' style='text-decoration: underline;'>Stacktrace</p>").click(function() { stackElement.toggle(); center(exceptionMessage); });
+
+                        exceptionMessage.append(stackTitle).append(stackElement);
+                    }
+
+                    return exceptionMessage;
                     break;
                 default:
                     return this.messageBlock(zindex, options);
