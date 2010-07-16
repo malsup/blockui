@@ -209,8 +209,8 @@
 
             return $('<div class="blockUI blockOverlay" style="z-index:' + zindex + ';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
         },
-        _messageBlock: function(zindex, options){
-             return messageBlock(zindex, options);
+        _messageBlock: function(zindex, options){ //this function is used to hook into the messageBlock generation when creating an extention for the messageBlock
+             return this.messageBlock(zindex, options);
         },
         messageBlock: function(zindex, options) {
             var opts = $.extend({}, $.blockUI.defaults, options);
