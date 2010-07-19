@@ -39,10 +39,6 @@
     var setExpr = $.browser.msie && (($.browser.version < 8 && !mode) || mode < 8);
     var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent) && !mode;
 
-    // global $ methods for blocking/unblocking the entire page
-    $.blockUI = function(opts) { install(window, opts); };
-    $.unblockUI = function(opts) { remove(window, opts); };
-
     // convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
     $.growlUI = function(title, message, timeout, onClose) {
         var $m = $('<div class="growlUI"></div>');
@@ -57,27 +53,34 @@
         });
     };
 
-    // plugin method for blocking element content
-    $.fn.block = function(opts) {
-        return this.unblock({ fadeOut: 0 }).each(function() {
-            if ($.css(this, 'position') == 'static')
-                this.style.position = 'relative';
-            if ($.browser.msie)
-                this.style.zoom = 1; // force 'hasLayout'
-            install(this, opts);
-        });
-    };
-
-    // plugin method for unblocking element content
-    $.fn.unblock = function(opts) {
-        return this.each(function() {
-            remove(this, opts);
-        });
-    };
+    // global $ methods for blocking/unblocking the entire page
+    $.blockUI = function(opts) { $.blockUI.block(window, opts); };
+    $.unblockUI = function(opts) { $.blockUI.unblock(window, opts); };
+    // plugin method for (un)blocking element content
+    $.fn.block = function(opts) { return $.blockUI.block(this, opts); };
+    $.fn.unblock = function(opts) { return $.blockUI.unblock(this, opts); };
 
     $.extend($.blockUI, {
         version: 2.33, // 2nd generation blocking at no extra cost!
 
+        block: function(el, options) {
+            var opts = $.extend({}, $.blockUI.defaults, options);
+            var $el = $(el);
+            return $el.unblock({ fadeOut: 0 }).each(function() {
+                if ($.css(this, 'position') == 'static')
+                    this.style.position = 'relative';
+                if ($.browser.msie && this.style)
+                    this.style.zoom = 1; // force 'hasLayout'
+                install(this, opts);
+            });
+        },
+        unblock: function(el, options) {
+            var opts = $.extend({}, $.blockUI.defaults, options);
+            var $el = $(el);
+            return $el.each(function() {
+                remove(this, opts);
+            });
+        },
         // override these in your code to change the default behavior and style
         defaults: {
             // message displayed when blocking (use null for no message)
