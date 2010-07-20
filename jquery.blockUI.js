@@ -65,10 +65,12 @@
             var opts = $.extend({}, $.blockUI.defaults, options);
             var $el = $(el);
             return $el.unblock({ fadeOut: 0 }).each(function() {
-                if ($.css(this, 'position') == 'static')
-                    this.style.position = 'relative';
-                if ($.browser.msie && this.style)
-                    this.style.zoom = 1; // force 'hasLayout'
+                if (this.style) {
+                    if ($.css(this, 'position') == 'static')
+                        this.style.position = 'relative';
+                    if ($.browser.msie)
+                        this.style.zoom = 1; // force 'hasLayout'
+                }
                 install(this, opts);
             });
         },
