@@ -20,6 +20,8 @@
 *
 * Add optional blockUI extention (see end of file)
 *   blockMessageType: default or exception
+*
+* Defined growlUI as a special messageBlockType => 'growl'
 */
 
 ; (function($) {
@@ -39,26 +41,22 @@
     var setExpr = $.browser.msie && (($.browser.version < 8 && !mode) || mode < 8);
     var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent) && !mode;
 
-    // convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
-    $.growlUI = function(title, message, timeout, onClose) {
-        var $m = $('<div class="growlUI"></div>');
-        if (title) $m.append('<h1>' + title + '</h1>');
-        if (message) $m.append('<h2>' + message + '</h2>');
-        if (timeout == undefined) timeout = 3000;
-        $.blockUI({
-            message: $m, fadeIn: 700, fadeOut: 1000, centerY: false,
-            timeout: timeout, showOverlay: false,
-            onUnblock: onClose,
-            css: $.blockUI.defaults.growlCSS
-        });
-    };
-
     // global $ methods for blocking/unblocking the entire page
     $.blockUI = function(opts) { $.blockUI.block(window, opts); };
     $.unblockUI = function(opts) { $.blockUI.unblock(window, opts); };
     // plugin method for (un)blocking element content
     $.fn.block = function(opts) { return $.blockUI.block(this, opts); };
     $.fn.unblock = function(opts) { return $.blockUI.unblock(this, opts); };
+    // convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
+    $.growlUI = function(title, message, timeout, onClose) {
+        $.blockUI({
+            message: message,
+            title: title,
+            timeout: timeout,
+            onUnblock: onClose,
+            messageBlockType: 'growl'
+        });
+    };
 
     $.extend($.blockUI, {
         version: 2.33, // 2nd generation blocking at no extra cost!
@@ -626,7 +624,7 @@
     //optional extentions on blockUI
     $.extend($.blockUI, {
         defaults: $.extend({}, {
-            messageBlockType: 'default', //specify the type of the messageBlock. default or exception (for the moment)
+            messageBlockType: 'default', //specify the type of the messageBlock. default or exception or growl(for the moment)
             source: null,
             stacktrace: null
         }, $.blockUI.defaults),
@@ -651,6 +649,23 @@
                     }
 
                     return exceptionMessage;
+                    break;
+                case 'growl':
+                    var $m = $('<div class="growlUI"></div>');
+                    if (options.title) $m.append('<h1>' + options.title + '</h1>');
+                    if (options.message) $m.append('<h2>' + options.message + '</h2>');
+                    if (!options.timeout || options.timeout == 0) options.timeout = 3000;
+                    $.extend(options, {
+                        message: $m,
+                        title: null,
+                        fadeIn: 700,
+                        fadeOut: 1000,
+                        centerY: false,
+                        timeout: options.timeout,
+                        showOverlay: false,
+                        css: options.growlCSS
+                    });
+                    return this.messageBlock(zindex, options);
                     break;
                 default:
                     return this.messageBlock(zindex, options);
