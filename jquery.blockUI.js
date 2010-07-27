@@ -22,6 +22,8 @@
 *   blockMessageType: default or exception
 *
 * Defined growlUI as a special messageBlockType => 'growl'
+*
+* add $.blockUI('unblock', window, opts); }; typed calls 
 */
 
 ; (function($) {
@@ -42,11 +44,24 @@
     var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent) && !mode;
 
     // global $ methods for blocking/unblocking the entire page
-    $.blockUI = function(opts) { $.blockUI.block(window, opts); };
-    $.unblockUI = function(opts) { $.blockUI.unblock(window, opts); };
+    $.blockUI = function(fnParams) {
+        if (typeof fnParams == "string") {
+
+            var blockUI_fn = $.blockUI[fnParams];
+
+            if (blockUI_fn) {
+                var args = $.makeArray(arguments).slice(1);
+                if (fnParams == 'block' || fnParams == 'unblock')
+                    return blockUI_fn.call(this, args[0], args[1]);
+                else return blockUI_fn.call(this, args);
+            }
+        } else
+            $.blockUI.block(window, fnParams);
+    };
+    $.unblockUI = function(opts) { $.blockUI('unblock', window, opts); };
     // plugin method for (un)blocking element content
-    $.fn.block = function(opts) { return $.blockUI.block(this, opts); };
-    $.fn.unblock = function(opts) { return $.blockUI.unblock(this, opts); };
+    $.fn.block = function(opts) { return $.blockUI('block', this, opts); };
+    $.fn.unblock = function(opts) { return $.blockUI('unblock', this, opts); };
     // convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
     $.growlUI = function(title, message, timeout, onClose) {
         $.blockUI({
@@ -64,7 +79,7 @@
         block: function(el, options) {
             var opts = $.extend({}, $.blockUI.defaults, options);
             var $el = $(el);
-            return $el.unblock({ fadeOut: 0 }).each(function() {
+            return $.blockUI('unblock', $el, { fadeOut: 0 }).each(function() {
                 if (this.style) {
                     if ($.css(this, 'position') == 'static')
                         this.style.position = 'relative';
