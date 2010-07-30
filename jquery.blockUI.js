@@ -51,9 +51,7 @@
 
             if (blockUI_fn) {
                 var args = $.makeArray(arguments).slice(1);
-                if (fnParams == 'block' || fnParams == 'unblock')
-                    return blockUI_fn.call(this, args[0], args[1]);
-                else return blockUI_fn.call(this, args);
+                return blockUI_fn.apply(this, args);
             }
         } else
             $.blockUI.block(window, fnParams);
