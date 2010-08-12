@@ -347,8 +347,8 @@
         if ($.browser.msie || opts.forceIframe)
             lyr1.css('opacity', 0.0);
 
-        //$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? pageElement : el);
-        var layers = [lyr1, lyr2, lyr3], $par = full ? $(pageElement) : $(el);
+        //$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? opts.pageElement : el);
+        var layers = [lyr1, lyr2, lyr3], $par = full ? $(opts.pageElement) : $(el);
         $.each(layers, function() {
             this.appendTo($par);
         });
@@ -484,7 +484,7 @@
 
         var els;
         if (full) // crazy selector to handle odd field errors in ie6/7
-            els = $(pageElement).children().filter('.blockUI').add(pageElement + ' > .blockUI');
+            els = $(opts.pageElement).children().filter('.blockUI').add(opts.pageElement + ' > .blockUI');
         else
             els = $('.blockUI', el);
 
