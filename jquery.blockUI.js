@@ -24,6 +24,7 @@
 * Defined growlUI as a special messageBlockType => 'growl'
 *
 * add $.blockUI('unblock', window, opts); }; typed calls 
+* minor fix for the header in a themed message => add ui-corner-top class
 */
 
 ; (function($) {
@@ -212,9 +213,7 @@
             keyCode: { ALT: 18, BACKSPACE: 8, CAPS_LOCK: 20, COMMA: 188, COMMAND: 91, COMMAND_LEFT: 91, COMMAND_RIGHT: 93, CONTROL: 17, DELETE: 46, DOWN: 40, END: 35, ENTER: 13, ESCAPE: 27, HOME: 36, INSERT: 45, LEFT: 37, MENU: 93, NUMPAD_ADD: 107, NUMPAD_DECIMAL: 110, NUMPAD_DIVIDE: 111, NUMPAD_ENTER: 108,
                 NUMPAD_MULTIPLY: 106, NUMPAD_SUBTRACT: 109, PAGE_DOWN: 34, PAGE_UP: 33, PERIOD: 190, RIGHT: 39, SHIFT: 16, SPACE: 32, TAB: 9, UP: 38, WINDOWS: 91
             },
-            buttons: {}, // ex: buttons: { Ok: function() { $.unblockUI(); } }
-
-            pageElement: 'body' // set to 'form' for this to work with all cases of ASP.NET WebForms
+            buttons: {} // ex: buttons: { Ok: function() { $.unblockUI(); } }
         },
 
         //blockUI building blocks
@@ -239,13 +238,13 @@
             var message;
             if (opts.theme && opts.full) {
                 message = '<div class="blockUI blockMsg blockPage ui-dialog ui-widget ui-corner-all" style="z-index:' + zindex + ';display:none;position:fixed">' +
-				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">' + (opts.title || '&nbsp;') + '</div>' +
+				'<div class="ui-widget-header ui-dialog-titlebar blockTitle ui-corner-top">' + (opts.title || '&nbsp;') + '</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
             }
             else if (opts.theme) {
                 message = '<div class="blockUI blockMsg blockElement ui-dialog ui-widget ui-corner-all" style="z-index:' + zindex + ';display:none;position:absolute">' +
-				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">' + (opts.title || '&nbsp;') + '</div>' +
+				'<div class="ui-widget-header ui-dialog-titlebar blockTitle ui-corner-top">' + (opts.title || '&nbsp;') + '</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
             }
@@ -347,8 +346,8 @@
         if ($.browser.msie || opts.forceIframe)
             lyr1.css('opacity', 0.0);
 
-        //$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? opts.pageElement : el);
-        var layers = [lyr1, lyr2, lyr3], $par = full ? $(opts.pageElement) : $(el);
+        //$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
+        var layers = [lyr1, lyr2, lyr3], $par = full ? $('body') : $(el);
         $.each(layers, function() {
             this.appendTo($par);
         });
@@ -484,7 +483,7 @@
 
         var els;
         if (full) // crazy selector to handle odd field errors in ie6/7
-            els = $(opts.pageElement).children().filter('.blockUI').add(opts.pageElement + ' > .blockUI');
+            els = $('body').children().filter('.blockUI').add('body > .blockUI');
         else
             els = $('.blockUI', el);
 
