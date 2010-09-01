@@ -25,6 +25,7 @@
 *
 * add $.blockUI('unblock', window, opts); }; typed calls 
 * minor fix for the header in a themed message => add ui-corner-top class
+* improve detection of full blocking + allow full blocking from within iframe => $(window.parent.top.window).block({ message: 'Full block test'});
 */
 
 ; (function($) {
@@ -55,7 +56,7 @@
                 return blockUI_fn.apply(this, args);
             }
         } else
-            $.blockUI.block(window, fnParams);
+            $.blockUI.block(window, $.extend({}, fnParams, { centerWithIframe: true }));
     };
     $.unblockUI = function(opts) { $.blockUI('unblock', window, opts); };
     // plugin method for (un)blocking element content
@@ -165,6 +166,7 @@
             // set these to true to have the message automatically centered
             centerX: true, // <-- only effects element blocking (page block controlled via css above)
             centerY: true,
+            centerWithIframe: false, //boolean, take iframe into account for centering the messageBlock
 
             // allow body element to be stetched in ie6; this makes blocking look better
             // on "short" pages.  disable if you wish to prevent changes to the body height
@@ -295,7 +297,7 @@
     function install(el, opts) {
         var self = this;
 
-        var full = (el == window);
+        var full = el ? (el.document != 'undefined') : false;
         var msg = opts && opts.message !== undefined ? opts.message : undefined;
         opts = $.extend({}, $.blockUI.defaults, opts || {});
         opts.overlayCSS = $.extend({}, $.blockUI.defaults.overlayCSS, opts.overlayCSS || {});
@@ -349,7 +351,7 @@
             lyr1.css('opacity', 0.0);
 
         //$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? opts.pageElement : el);
-        var layers = [lyr1, lyr2, lyr3], $par = full ? $(opts.pageElement) : $(el);
+        var layers = [lyr1, lyr2, lyr3], $par = full ? $(opts.pageElement, el.document) : $(el);
         $.each(layers, function() {
             this.appendTo($par);
         });
@@ -429,7 +431,7 @@
                 setTimeout(focus, 20);
         }
 
-        center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY });
+        center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe });
 
         if (opts.timeout) {
             // auto-unblock
@@ -472,7 +474,7 @@
 
     // remove the block
     function remove(el, opts) {
-        var full = (el == window);
+        var full = el ? (el.document != 'undefined') : false;
         var $el = $(el);
         var data = $el.data('blockUI.history');
         var to = $el.data('blockUI.timeout');
@@ -485,7 +487,7 @@
 
         var els;
         if (full) // crazy selector to handle odd field errors in ie6/7
-            els = $(opts.pageElement).children().filter('.blockUI').add(opts.pageElement + ' > .blockUI');
+            els = $(opts.pageElement, el.document).children().filter('.blockUI').add(opts.pageElement + ' > .blockUI', el.document);
         else
             els = $('.blockUI', el);
 
@@ -522,7 +524,7 @@
 
     // bind/unbind the handler
     function bind(b, el, opts) {
-        var full = el == window, $el = $(el);
+        var full = el ? (el.document != 'undefined') : false, $el = $(el);
 
         // don't bother unbinding if there is nothing to unbind
         if (!b && (full && !pageBlock || !full && !$el.data('blockUI.isBlocked')))
@@ -536,7 +538,7 @@
 
         // bind anchors and inputs for mouse and key events
         var events = 'mousedown mouseup keydown keypress';
-        b ? $(document).bind(events, opts, handler) : $(document).unbind(events, handler);
+        b ? $(el.document).bind(events, opts, handler) : $(el.document).unbind(events, handler);
 
         // former impl...
         //	   var $e = $('a,:input');
@@ -559,12 +561,12 @@
                 }
             } else if (e.keyCode == e.data.keyCode.ESCAPE) {
                 if (e.data.closeOnEscape) {
-                    remove(e.target.parent, e.data);
+                    remove(GetOwnerWindow(e.target), e.data);
                 }
             }
         } else if (e.button >= 0) {
             if (e.data.closeOnClick) {
-                remove(e.target.parent, e.data);
+                remove(GetOwnerWindow(e.target), e.data);
             }
         }
         // allow events within the message content
@@ -637,6 +639,14 @@
     function sz(el, p) {
         return parseInt($.css(el, p)) || 0;
     };
+
+    function GetOwnerWindow(html_node) {
+        /*
+        ownerDocument is cross-browser, 
+        but defaultView works on all browsers except Opera/IE that use parentWinow
+        */
+        return html_node.ownerDocument.defaultView || html_node.ownerDocument.parentWindow;
+    }
 
 
     //optional extentions on blockUI
