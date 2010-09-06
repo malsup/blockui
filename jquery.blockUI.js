@@ -26,6 +26,7 @@
 * add $.blockUI('unblock', window, opts); }; typed calls 
 * minor fix for the header in a themed message => add ui-corner-top class
 * improve detection of full blocking + allow full blocking from within iframe => $(window.parent.top.window).block({ message: 'Full block test'});
+* add 'dialog' messageBlockType => adds some extra css when showing some dialog as block
 */
 
 ; (function($) {
@@ -56,7 +57,7 @@
                 return blockUI_fn.apply(this, args);
             }
         } else
-            $.blockUI.block(window, $.extend({}, fnParams, { centerWithIframe: true }));
+            $.blockUI.block(window, $.extend({}, { centerWithIframe: true }, fnParams));
     };
     $.unblockUI = function(opts) { $.blockUI('unblock', window, opts); };
     // plugin method for (un)blocking element content
@@ -128,6 +129,9 @@
                 top: '40%',
                 left: '35%'
             },
+
+            // minimal style set for the message content
+            msgContentCSS: {},
 
             // styles for the overlay
             overlayCSS: {
@@ -268,6 +272,8 @@
                 }
                 else
                     messageblock.css(opts.css);
+
+                messageblock.find('.ui-widget-content').css(opts.msgContentCSS);
 
                 // show the message
                 if (opts.theme)
@@ -652,7 +658,7 @@
     //optional extentions on blockUI
     $.extend($.blockUI, {
         defaults: $.extend({}, {
-            messageBlockType: 'default', //specify the type of the messageBlock. default or exception or growl(for the moment)
+            messageBlockType: 'default', //specify the type of the messageBlock. default or exception or growl or dialog (for the moment)
             source: null,
             stacktrace: null
         }, $.blockUI.defaults),
@@ -693,6 +699,25 @@
                         showOverlay: false,
                         css: options.growlCSS
                     });
+                    return this.messageBlock(zindex, options);
+                    break;
+                case 'dialog':
+                    $.extend(options, {
+                        css: {
+                            overflow: 'auto',
+                            width: 'auto'
+                        },
+                        themedCSS: {
+                            overflow: 'auto',
+                            width: 'auto'
+                        },
+                        msgContentCSS: {
+                            overflow: 'hidden' //hide the unneeded scrollbars in ie7
+                        },
+                        theme: true,
+                        centerWithIframe: false
+                    });
+
                     return this.messageBlock(zindex, options);
                     break;
                 default:
