@@ -27,6 +27,7 @@
 * minor fix for the header in a themed message => add ui-corner-top class
 * improve detection of full blocking + allow full blocking from within iframe => $(window.parent.top.window).block({ message: 'Full block test'});
 * add dialog messageBlockType => adds some extra css when showing some dialog as block
+* add options centerWithIframeSkipOffset => center inside the iframe but take the scrolloffset of the iframe's parent window into account
 */
 
 ; (function($) {
@@ -57,7 +58,7 @@
                 return blockUI_fn.apply(this, args);
             }
         } else
-            $.blockUI.block(window, $.extend({}, { centerWithIframe: true }, fnParams));
+            $.blockUI.block(window, $.extend({}, { centerWithIframe: true, centerWithIframeSkipOffset: true }, fnParams));
     };
     $.unblockUI = function(opts) { $.blockUI('unblock', window, opts); };
     // plugin method for (un)blocking element content
@@ -171,6 +172,7 @@
             centerX: true, // <-- only effects element blocking (page block controlled via css above)
             centerY: true,
             centerWithIframe: false, //boolean, take iframe into account for centering the messageBlock
+            centerWithIframeSkipOffset: false,
 
             // allow body element to be stetched in ie6; this makes blocking look better
             // on "short" pages.  disable if you wish to prevent changes to the body height
@@ -437,7 +439,7 @@
                 setTimeout(focus, 20);
         }
 
-        center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe });
+        center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeSkipOffset: opts.centerWithIframeSkipOffset });
 
         if (opts.timeout) {
             // auto-unblock
@@ -597,44 +599,49 @@
             transition: 0, // millisecond, transition time
             minX: 0, // pixel, minimum left element value
             minY: 0, // pixel, minimum top element value
-            vertical: true, // booleen, center vertical
-            withScrolling: true, // booleen, take care of element inside scrollTop when minX < 0 and window is small or when window is big
-            horizontal: true, // booleen, center horizontal
-            iframe: true //boolean, take iframe into account
+            vertical: true, // boolean, center vertical
+            withScrolling: true, // boolean, take care of element inside scrollTop when minX < 0 and window is small or when window is big
+            horizontal: true, // boolean, center horizontal
+            iframe: true, //center screen also from within an iframe
+            iframeSkipOffset: false,
+            scrollingWindow: window
         }, options);
         var props = { position: 'absolute' };
         var iframeXOffset = 0, iframeYOffset = 0;
         if (options.iframe && options.withScrolling) {
             if (window.parent && window.parent.document) {
+                options.scrollingWindow = window.parent.top;
+                if (!options.iframeSkipOffset) {
+                    options.inside = window.parent.top;
 
-                options.inside = window.parent.top;
-                var iframes = $('iframe', options.inside.document);
+                    var iframes = $('iframe', options.inside.document);
 
-                var i = iframes.length;
-                while (i--) {
-                    if (iframes[i].contentDocument) {
-                        doc = iframes[i].contentDocument;
-                    } else {
-                        doc = iframes[i].contentWindow.document;
-                    }
-                    if (doc === document) {
-                        //located our iframe!
-                        iframeXOffset = $(iframes[i]).offset().left;
-                        iframeYOffset = $(iframes[i]).offset().top;
-                        break;
-                    }
-                };
+                    var i = iframes.length;
+                    while (i--) {
+                        if (iframes[i].contentDocument) {
+                            doc = iframes[i].contentDocument;
+                        } else {
+                            doc = iframes[i].contentWindow.document;
+                        }
+                        if (doc === document) {
+                            //located our iframe!
+                            iframeXOffset = $(iframes[i]).offset().left;
+                            iframeYOffset = $(iframes[i]).offset().top;
+                            break;
+                        }
+                    };
+                }
             }
         }
         if (options.vertical) {
             var top = (($(options.inside).height() - $(el).outerHeight()) / 2) - iframeYOffset;
-            if (options.withScrolling) top += $(options.inside).scrollTop() || 0;
+            if (options.withScrolling) top += $(options.scrollingWindow).scrollTop() || 0;
             top = (top > options.minY ? top : options.minY);
             $.extend(props, { top: top + 'px' });
         }
         if (options.horizontal) {
             var left = (($(options.inside).width() - $(el).outerWidth()) / 2) - iframeXOffset;
-            if (options.withScrolling) left += $(options.inside).scrollLeft() || 0;
+            if (options.withScrolling) left += $(options.scrollingWindow).scrollLeft() || 0;
             left = (left > options.minX ? left : options.minX);
             $.extend(props, { left: left + 'px' });
         }
@@ -713,8 +720,7 @@
                         msgContentCSS: {
                             overflow: 'hidden' //hide the unneeded scrollbars in ie7
                         },
-                        theme: true,
-                        centerWithIframe: false
+                        theme: true
                     });
 
                     return this.messageBlock(zindex, options);
