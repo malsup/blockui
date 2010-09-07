@@ -26,7 +26,7 @@
 * add $.blockUI('unblock', window, opts); }; typed calls 
 * minor fix for the header in a themed message => add ui-corner-top class
 * improve detection of full blocking + allow full blocking from within iframe => $(window.parent.top.window).block({ message: 'Full block test'});
-* add 'dialog' messageBlockType => adds some extra css when showing some dialog as block
+* add dialog messageBlockType => adds some extra css when showing some dialog as block
 */
 
 ; (function($) {
@@ -111,9 +111,9 @@
             // these and use an external stylesheet then do this in your code:
             // $.blockUI.defaults.css = {};
             css: {
+                'min-width': '30%',
                 padding: 0,
                 margin: 0,
-                width: '30%',
                 top: '40%',
                 left: '35%',
                 textAlign: 'center',
@@ -125,7 +125,7 @@
 
             // minimal style set used when themes are used
             themedCSS: {
-                width: '30%',
+                'min-width': '30%',
                 top: '40%',
                 left: '35%'
             },
@@ -670,6 +670,9 @@
                         message: "<br/>" + options.message + "<br/><br/>",
                         buttons: { Ok: function() { $.unblockUI(); } },
                         theme: true,
+                        msgContentCSS: {
+                            overflow: 'hidden' //hide the unneeded scrollbars in ie7
+                        },
                         closeOnEscape: true
                     });
 
@@ -703,10 +706,6 @@
                     break;
                 case 'dialog':
                     $.extend(options, {
-                        css: {
-                            overflow: 'auto',
-                            width: 'auto'
-                        },
                         themedCSS: {
                             overflow: 'auto',
                             width: 'auto'
