@@ -305,7 +305,7 @@
     function install(el, opts) {
         var self = this;
 
-        var full = el ? (el.document != 'undefined') : false;
+        var full = el ? (el == el.window) : false;
         var msg = opts && opts.message !== undefined ? opts.message : undefined;
         opts = $.extend({}, $.blockUI.defaults, opts || {});
         opts.overlayCSS = $.extend({}, $.blockUI.defaults.overlayCSS, opts.overlayCSS || {});
@@ -482,7 +482,7 @@
 
     // remove the block
     function remove(el, opts) {
-        var full = el ? (el.document != 'undefined') : false;
+        var full = el ? (el == el.window) : false;
         var $el = $(el);
         var data = $el.data('blockUI.history');
         var to = $el.data('blockUI.timeout');
@@ -532,7 +532,7 @@
 
     // bind/unbind the handler
     function bind(b, el, opts) {
-        var full = el ? (el.document != 'undefined') : false, $el = $(el);
+        var full = el ? (el == el.window) : false, $el = $(el);
 
         // don't bother unbinding if there is nothing to unbind
         if (!b && (full && !pageBlock || !full && !$el.data('blockUI.isBlocked')))
@@ -603,14 +603,13 @@
             withScrolling: true, // boolean, take care of element inside scrollTop when minX < 0 and window is small or when window is big
             horizontal: true, // boolean, center horizontal
             iframe: true, //center screen also from within an iframe
-            iframeSkipOffset: false,
-            scrollingWindow: window
+            iframeSkipOffset: false
         }, options);
         var props = { position: 'absolute' };
-        var iframeXOffset = 0, iframeYOffset = 0;
+        var iframeXOffset = 0, iframeYOffset = 0, scrollingWindow = options.inside;
         if (options.iframe && options.withScrolling) {
             if (window.parent && window.parent.document) {
-                options.scrollingWindow = window.parent.top;
+                scrollingWindow = window.parent.top;
                 if (!options.iframeSkipOffset) {
                     options.inside = window.parent.top;
 
@@ -635,13 +634,13 @@
         }
         if (options.vertical) {
             var top = (($(options.inside).height() - $(el).outerHeight()) / 2) - iframeYOffset;
-            if (options.withScrolling) top += $(options.scrollingWindow).scrollTop() || 0;
+            if (options.withScrolling) top += $(scrollingWindow).scrollTop() || 0;
             top = (top > options.minY ? top : options.minY);
             $.extend(props, { top: top + 'px' });
         }
         if (options.horizontal) {
             var left = (($(options.inside).width() - $(el).outerWidth()) / 2) - iframeXOffset;
-            if (options.withScrolling) left += $(options.scrollingWindow).scrollLeft() || 0;
+            if (options.withScrolling) left += $(scrollingWindow).scrollLeft() || 0;
             left = (left > options.minX ? left : options.minX);
             $.extend(props, { left: left + 'px' });
         }
