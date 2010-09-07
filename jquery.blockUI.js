@@ -178,7 +178,10 @@ $.blockUI.defaults = {
 	onUnblock: null,
 
 	// don't ask; if you really must know: http://groups.google.com/group/jquery-en/browse_thread/thread/36640a8730503595/2f6a79a77a78e493#2f6a79a77a78e493
-	quirksmodeOffsetHack: 4
+	quirksmodeOffsetHack: 4,
+
+	// class name of the message block
+	blockMsgClass: 'blockMsg'
 };
 
 // private data and functions follow...
@@ -228,22 +231,22 @@ function install(el, opts) {
 	
 	var lyr3, s;
 	if (opts.theme && full) {
-		s = '<div class="blockUI blockMsg blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:fixed">' +
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:fixed">' +
 				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
 	}
 	else if (opts.theme) {
-		s = '<div class="blockUI blockMsg blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:absolute">' +
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:absolute">' +
 				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
 	}
 	else if (full) {
-		s = '<div class="blockUI blockMsg blockPage" style="z-index:'+z+';display:none;position:fixed"></div>';
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage" style="z-index:'+z+';display:none;position:fixed"></div>';
 	}			
 	else {
-		s = '<div class="blockUI blockMsg blockElement" style="z-index:'+z+';display:none;position:absolute"></div>';
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement" style="z-index:'+z+';display:none;position:absolute"></div>';
 	}
 	lyr3 = $(s);
 
@@ -456,7 +459,7 @@ function handler(e) {
 		}
 	}
 	// allow events within the message content
-	if ($(e.target).parents('div.blockMsg').length > 0)
+	if ($(e.target).parents('div.' + opts.blockMsgClass).length > 0)
 		return true;
 
 	// allow events for content that is not being blocked
