@@ -603,33 +603,35 @@
             withScrolling: true, // boolean, take care of element inside scrollTop when minX < 0 and window is small or when window is big
             horizontal: true, // boolean, center horizontal
             iframe: true, //center screen also from within an iframe
-            iframeHorizontal: false //center in the iframe
+            iframeHorizontal: false //true => center in the iframe
         }, options);
         var props = { position: 'absolute' };
         var iframeXOffset = 0, iframeYOffset = 0, insideX = options.inside;
 
         if (options.iframe && options.withScrolling) {
             if (window.parent && window.parent.document) {
-                options.inside = window.parent.top;
-                var iframes = $('iframe', options.inside.document);
-                var i = iframes.length;
-                while (i--) {
-                    if (iframes[i].contentDocument) {
-                        doc = iframes[i].contentDocument;
-                    } else {
-                        doc = iframes[i].contentWindow.document;
-                    }
-                    if (doc === document) {
-                        //located our iframe!
-                        iframeXOffset = $(iframes[i]).offset().left;
-                        iframeYOffset = $(iframes[i]).offset().top;
-                        break;
-                    }
-                };
+                if ($(window.parent.top).scrollTop() > 0) {
+                    options.inside = window.parent.top;
+                    var iframes = $('iframe', options.inside.document);
+                    var i = iframes.length;
+                    while (i--) {
+                        if (iframes[i].contentDocument) {
+                            doc = iframes[i].contentDocument;
+                        } else {
+                            doc = iframes[i].contentWindow.document;
+                        }
+                        if (doc === document) {
+                            //located our iframe!
+                            iframeXOffset = $(iframes[i]).offset().left;
+                            iframeYOffset = $(iframes[i]).offset().top;
+                            break;
+                        }
+                    };
 
-                if (options.iframeHorizontal == false)
-                    insideX = options.inside;
-                else iframeXOffset = 0;
+                    if (options.iframeHorizontal == false)
+                        insideX = options.inside;
+                    else iframeXOffset = 0;
+                }
             }
         }
         if (options.vertical) {
