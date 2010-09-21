@@ -459,7 +459,7 @@ function handler(e) {
 		}
 	}
 	// allow events within the message content
-	if ($(e.target).parents('div.' + opts.blockMsgClass).length > 0)
+	if ($(e.target).parents('div.' + e.data.blockMsgClass).length > 0)
 		return true;
 
 	// allow events for content that is not being blocked
