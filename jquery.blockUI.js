@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.33 (29-MAR-2010)
+ * Version 2.34 (23-SEP-2010)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -458,6 +458,7 @@ function handler(e) {
 			}
 		}
 	}
+	var opts = e.data;
 	// allow events within the message content
 	if ($(e.target).parents('div.' + opts.blockMsgClass).length > 0)
 		return true;
