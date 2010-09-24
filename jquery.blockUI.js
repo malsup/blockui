@@ -28,6 +28,7 @@
 * improve detection of full blocking + allow full blocking from within iframe => $(window.parent.top.window).block({ message: 'Full block test'});
 * add dialog messageBlockType => adds some extra css when showing some dialog as block
 * removedskipiframe offset and added centerWithIframeHorizontal option as replacement
+* added support for customized message block class name (default is "blockMsg").(see fwangel)
 */
 
 ; (function($) {
@@ -222,8 +223,8 @@
                 NUMPAD_MULTIPLY: 106, NUMPAD_SUBTRACT: 109, PAGE_DOWN: 34, PAGE_UP: 33, PERIOD: 190, RIGHT: 39, SHIFT: 16, SPACE: 32, TAB: 9, UP: 38, WINDOWS: 91
             },
             buttons: {}, // ex: buttons: { Ok: function() { $.unblockUI(); } }
-            pageElement: 'body' // set to 'form' for this to work with all cases of ASP.NET WebForms
-
+            pageElement: 'body', // set to 'form' for this to work with all cases of ASP.NET WebForms
+            blockMsgClass: 'blockMsg'// class name of the message block
         },
 
         //blockUI building blocks
@@ -247,22 +248,22 @@
 
             var message;
             if (opts.theme && opts.full) {
-                message = '<div class="blockUI blockMsg blockPage ui-dialog ui-widget ui-corner-all" style="z-index:' + zindex + ';display:none;position:fixed">' +
+                message = '<div class="blockUI ' + options.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:' + zindex + ';display:none;position:fixed">' +
 				'<div class="ui-widget-header ui-dialog-titlebar blockTitle ui-corner-top">' + (opts.title || '&nbsp;') + '</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
             }
             else if (opts.theme) {
-                message = '<div class="blockUI blockMsg blockElement ui-dialog ui-widget ui-corner-all" style="z-index:' + zindex + ';display:none;position:absolute">' +
+                message = '<div class="blockUI ' + options.blockMsgClass + ' blockElement ui-dialog ui-widget ui-corner-all" style="z-index:' + zindex + ';display:none;position:absolute">' +
 				'<div class="ui-widget-header ui-dialog-titlebar blockTitle ui-corner-top">' + (opts.title || '&nbsp;') + '</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
             }
             else if (opts.full) {
-                message = '<div class="blockUI blockMsg blockPage msgContent" style="z-index:' + zindex + ';display:none;position:fixed"></div>';
+                message = '<div class="blockUI ' + options.blockMsgClass + ' blockPage msgContent" style="z-index:' + zindex + ';display:none;position:fixed"></div>';
             }
             else {
-                message = '<div class="blockUI blockMsg blockElement msgContent" style="z-index:' + zindex + ';display:none;position:absolute"></div>';
+                message = '<div class="blockUI ' + options.blockMsgClass + ' blockElement msgContent" style="z-index:' + zindex + ';display:none;position:absolute"></div>';
             }
 
             var messageblock = $(message);
@@ -578,7 +579,8 @@
             }
         }
         // allow events within the message content
-        if ($(e.target).parents('div.blockMsg').length > 0)
+        var options = e.data;
+        if ($(e.target).parents('div.' + options.blockMsgClass).length > 0)
             return true;
 
         // allow events for content that is not being blocked
