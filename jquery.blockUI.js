@@ -29,6 +29,8 @@
 * add dialog messageBlockType => adds some extra css when showing some dialog as block
 * removedskipiframe offset and added centerWithIframeHorizontal option as replacement
 * added support for customized message block class name (default is "blockMsg").(see fwangel)
+* bugfix: make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
+* added support for customized button class name (default is "button").
 */
 
 ; (function($) {
@@ -224,7 +226,8 @@
             },
             buttons: {}, // ex: buttons: { Ok: function() { $.unblockUI(); } }
             pageElement: 'body', // set to 'form' for this to work with all cases of ASP.NET WebForms
-            blockMsgClass: 'blockMsg'// class name of the message block
+            blockMsgClass: 'blockMsg', // class name of the message block
+            buttonClass: 'button'// class name of the buttons
         },
 
         //blockUI building blocks
@@ -365,6 +368,12 @@
             this.appendTo($par);
         });
 
+        //make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
+        if (full && lyr3.outerHeight() > ($par.height() - $par.offset().top)) {
+            var addHeight = lyr3.outerHeight() - ($par.height() - $par.offset().top) + 10;
+            $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
+        }
+
         if (opts.theme && opts.draggable && $.fn.draggable) {
             lyr3.draggable({
                 handle: '.ui-dialog-titlebar',
@@ -457,7 +466,7 @@
             buttonPane = $('<div></div>');
 
         if (options.theme) {
-            buttonPane.addClass('ui-dialog-buttonpane ' + 'ui-widget-content ' + 'ui-helper-clearfix');
+            buttonPane.addClass('ui-dialog-buttonpane ui-widget-content ui-helper-clearfix');
             // if we already have a button pane, remove it
             el.find('.ui-dialog-buttonpane').remove();
         }
@@ -470,6 +479,7 @@
         if (hasButtons) {
             $.each(buttons, function(name, fn) {
                 var button = $('<button type="button"></button>').text(name).click(function() { fn.apply(el[0], arguments); }).appendTo(buttonPane);
+                button.addClass(options.buttonClass);
                 if ($.fn.button) {
                     button.button();
                 }
