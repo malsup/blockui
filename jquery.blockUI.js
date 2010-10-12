@@ -479,12 +479,12 @@
         if (hasButtons) {
             $.each(buttons, function(name, fn) {
                 var button = $('<button type="button"></button>').text(name).click(function() { fn.apply(el[0], arguments); }).appendTo(buttonPane);
-                button.addClass(options.buttonClass);
+                button.addClass(options.buttonClass).css('float', 'right');
                 if ($.fn.button) {
                     button.button();
                 }
                 if (!options.theme) {
-                    button.css('float', 'right').css('margin', '3px').css('padding', '1px 3px');
+                    button.css('margin', '3px').css('padding', '1px 3px');
                 }
             });
             buttonPane.appendTo(el);
