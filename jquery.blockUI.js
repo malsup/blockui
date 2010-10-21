@@ -31,6 +31,11 @@
 * added support for customized message block class name (default is "blockMsg").(see fwangel)
 * bugfix: make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
 * added support for customized button class name (default is "button").
+
+* append space to parent when the messageblock changes in size
+* used specifically when the site runs inside an iframe and we need to notify the parent iframe to resize
+* we can watch the content size and call the parent to resize
+* dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
 */
 
 ; (function($) {
@@ -457,6 +462,20 @@
                 full ? $.unblockUI(opts) : $(el).unblock(opts);
             }, opts.timeout);
             $(el).data('blockUI.timeout', to);
+        }
+
+        //append space to parent when the messageblock changes in size
+        //used specifically when the site runs inside an iframe and we need to notify the parent iframe to resize
+        //we can watch the content size and call the parent to resize
+        //dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
+        if (opts.centerWithIframe) {
+            $(lyr3).resize(function() {
+                if (full && lyr3.outerHeight() > ($par.height() - $par.offset().top)) {
+                    var addHeight = lyr3.outerHeight() - ($par.height() - $par.offset().top) + 10;
+                    $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
+                }
+                center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
+            });
         }
     };
 
