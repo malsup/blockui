@@ -378,8 +378,8 @@
         });
 
         //make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
-        if (full && lyr3.outerHeight() > ($par.height() - $par.offset().top)) {
-            var addHeight = lyr3.outerHeight() - ($par.height() - $par.offset().top) + 10;
+        if (full && lyr3.outerHeight() > ($par.height() - $(window.parent.top).scrollTop())) {
+            var addHeight = lyr3.outerHeight() - ($par.height() - $(window.parent.top).scrollTop()) + 10;
             $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
         }
 
@@ -474,8 +474,8 @@
         //dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
         if (opts.centerWithIframe) {
             $(lyr3).resize(function() {
-                if (full && lyr3.outerHeight() > ($par.height() - $par.offset().top)) {
-                    var addHeight = lyr3.outerHeight() - ($par.height() - $par.offset().top) + 10;
+                if (full && lyr3.outerHeight() > ($par.height() - $(window.parent.top).scrollTop())) {
+                    var addHeight = lyr3.outerHeight() - ($par.height() - $(window.parent.top).scrollTop()) + 10;
                     $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
                 }
                 center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
