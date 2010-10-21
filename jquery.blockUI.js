@@ -121,6 +121,8 @@
             // $.blockUI.defaults.css = {};
             css: {
                 'min-width': '30%',
+                'max-width': '96%',
+                width: 'auto',
                 padding: 0,
                 margin: 0,
                 top: '40%',
@@ -135,6 +137,8 @@
             // minimal style set used when themes are used
             themedCSS: {
                 'min-width': '30%',
+                'max-width': '96%',
+                width: 'auto',
                 top: '40%',
                 left: '35%'
             },
