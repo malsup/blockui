@@ -122,7 +122,6 @@
             css: {
                 'min-width': '30%',
                 'max-width': '96%',
-                width: 'auto',
                 padding: 0,
                 margin: 0,
                 top: '40%',
@@ -138,7 +137,6 @@
             themedCSS: {
                 'min-width': '30%',
                 'max-width': '96%',
-                width: 'auto',
                 top: '40%',
                 left: '35%'
             },
