@@ -111,7 +111,7 @@
         // override these in your code to change the default behavior and style
         defaults: {
             // message displayed when blocking (use null for no message)
-            message: '<h1>Please wait...</h1>',
+            message: '<h3>Please wait...</h3>',
 
             title: null,   // title string; only used when theme == true
             draggable: true,  // only used when theme == true (requires jquery-ui.js to be loaded)
@@ -212,9 +212,6 @@
             // if true, focus will be placed in the first available input field when
             // page blocking
             focusInput: true,
-
-            // suppresses the use of overlay styles on FF/Linux (due to performance issues with opacity)
-            applyPlatformOpacityRules: true,
 
             // callback method invoked when fadeIn has completed and blocking message is visible
             onBlock: null,
@@ -366,8 +363,7 @@
         }
 
         // style the overlay
-        if (!opts.applyPlatformOpacityRules || !($.browser.mozilla && /Linux/.test(navigator.platform)))
-            lyr2.css(opts.overlayCSS);
+        lyr2.css(opts.overlayCSS);
         lyr2.css('position', full ? 'fixed' : 'absolute');
 
         // make iframe layer transparent in IE
@@ -522,8 +518,10 @@
         var full = el ? (el == el.window) : false;
         var $el = $(el);
         //restore the onUnblock callback from the element data
-		if(opts.onUnblock == null)
+		if(opts.onUnblock == null){
 			opts.onUnblock = $(el).data('onUnblock');
+			$(el).data('onUnblock', null);
+		}
 		
         var data = $el.data('blockUI.history');
         var to = $el.data('blockUI.timeout');
