@@ -36,6 +36,8 @@
 * used specifically when the site runs inside an iframe and we need to notify the parent iframe to resize
 * we can watch the content size and call the parent to resize
 * dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
+*
+* save & restore the onUnBlock callback  when install/remove the blockui
 */
 
 ; (function($) {
@@ -122,7 +124,6 @@
             css: {
                 'min-width': '30%',
                 'max-width': '96%',
-                width: 'auto',
                 padding: 0,
                 margin: 0,
                 top: '40%',
@@ -138,7 +139,6 @@
             themedCSS: {
                 'min-width': '30%',
                 'max-width': '96%',
-                width: 'auto',
                 top: '40%',
                 left: '35%'
             },
@@ -325,6 +325,9 @@
         opts.css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
         opts.themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
         msg = msg === undefined ? opts.message : msg;
+
+		//save the onUnblock callback in the elements data tobe reused when call unblock from another call
+		$(el).data('onUnblock', opts.onUnblock);
 
         // remove the current block (if there is one)
         if (full && pageBlock)
@@ -518,6 +521,10 @@
     function remove(el, opts) {
         var full = el ? (el == el.window) : false;
         var $el = $(el);
+        //restore the onUnblock callback from the element data
+		if(opts.onUnblock == null)
+			opts.onUnblock = $(el).data('onUnblock');
+		
         var data = $el.data('blockUI.history');
         var to = $el.data('blockUI.timeout');
         if (to) {
