@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.35 (23-SEP-2010)
+ * Version 2.36 (16-NOV-2010)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -450,8 +450,8 @@ function handler(e) {
 	if (e.keyCode && e.keyCode == 9) {
 		if (pageBlock && e.data.constrainTabKey) {
 			var els = pageBlockEls;
-			var fwd = !e.shiftKey && e.target == els[els.length-1];
-			var back = e.shiftKey && e.target == els[0];
+			var fwd = !e.shiftKey && e.target === els[els.length-1];
+			var back = e.shiftKey && e.target === els[0];
 			if (fwd || back) {
 				setTimeout(function(){focus(back)},10);
 				return false;
