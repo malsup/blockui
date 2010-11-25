@@ -1,46 +1,14 @@
-/*!
-* jQuery blockUI plugin
-* Version 2.33 (29-MAR-2010)
-* @requires jQuery v1.2.3 or later
-*
-* Examples at: http://malsup.com/jquery/block/
-* Copyright (c) 2007-2008 M. Alsup
-* Dual licensed under the MIT and GPL licenses:
-* http://www.opensource.org/licenses/mit-license.php
-* http://www.gnu.org/licenses/gpl.html
-*
-* Thanks to Amir-Hossein Sobhi for some excellent contributions!
-*
-* 
-* Adjust center function to take a possible iframe into account
-* Add closeOnEscape option
-* separated the 'building blocks' iframe, overlay, messageblock from the other logic => easier to extend in the future
-* Add closeOnClick option
-* Add buttons option => created a buttonPane like in ui-dialog
-*
-* Add optional blockUI extention (see end of file)
-*   blockMessageType: default or exception
-*
-* Defined growlUI as a special messageBlockType => 'growl'
-*
-* add $.blockUI('unblock', window, opts); }; typed calls 
-* minor fix for the header in a themed message => add ui-corner-top class
-* improve detection of full blocking + allow full blocking from within iframe => $(window.parent.top.window).block({ message: 'Full block test'});
-* add dialog messageBlockType => adds some extra css when showing some dialog as block
-* removedskipiframe offset and added centerWithIframeHorizontal option as replacement
-* added support for customized message block class name (default is "blockMsg").(see fwangel)
-* bugfix: make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
-* added support for customized button class name (default is "button").
+﻿/*
+blockUI plugin for jquery
+http://github.com/RobinHerbots/blockui
+Copyright (c) 2010 Robin Herbots
+Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
+Version: 0.0.1
 
-* append space to parent when the messageblock changes in size
-* used specifically when the site runs inside an iframe and we need to notify the parent iframe to resize
-* we can watch the content size and call the parent to resize
-* dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
-*
-* save & restore the onUnBlock callback  when install/remove the blockui
+This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http://malsup.com/jquery/block/)
 */
 
-; (function($) {
+(function($) {
 
     if (/1\.(0|1|2)\.(0|1|2)/.test($.fn.jquery) || /^1.1/.test($.fn.jquery)) {
         alert('blockUI requires jQuery v1.2.3 or later!  You are using v' + $.fn.jquery);
@@ -74,16 +42,6 @@
     // plugin method for (un)blocking element content
     $.fn.block = function(opts) { return $.blockUI('block', this, opts); };
     $.fn.unblock = function(opts) { return $.blockUI('unblock', this, opts); };
-    // convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
-    $.growlUI = function(title, message, timeout, onClose) {
-        $.blockUI({
-            message: message,
-            title: title,
-            timeout: timeout,
-            onUnblock: onClose,
-            messageBlockType: 'growl'
-        });
-    };
 
     $.extend($.blockUI, {
         version: 2.33, // 2nd generation blocking at no extra cost!
@@ -323,8 +281,8 @@
         opts.themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
         msg = msg === undefined ? opts.message : msg;
 
-		//save the onUnblock callback in the elements data tobe reused when call unblock from another call
-		$(el).data('onUnblock', opts.onUnblock);
+        //save the onUnblock callback in the elements data tobe reused when call unblock from another call
+        $(el).data('onUnblock', opts.onUnblock);
 
         // remove the current block (if there is one)
         if (full && pageBlock)
@@ -518,11 +476,11 @@
         var full = el ? (el == el.window) : false;
         var $el = $(el);
         //restore the onUnblock callback from the element data
-		if(opts.onUnblock == null){
-			opts.onUnblock = $(el).data('onUnblock');
-			$(el).data('onUnblock', null);
-		}
-		
+        if (opts.onUnblock == null) {
+            opts.onUnblock = $(el).data('onUnblock');
+            $(el).data('onUnblock', null);
+        }
+
         var data = $el.data('blockUI.history');
         var to = $el.data('blockUI.timeout');
         if (to) {
@@ -708,7 +666,7 @@
         defaults: $.extend({}, {
             messageBlockType: 'default', //specify the type of the messageBlock. default or exception or growl or dialog (for the moment)
             source: null,
-            stacktrace: null
+            exceptionId: null
         }, $.blockUI.defaults),
 
         _messageBlock: function(zindex, options) {
@@ -718,6 +676,10 @@
                         message: "<br/>" + options.message + "<br/><br/>",
                         buttons: { Ok: function() { $.unblockUI(); } },
                         theme: true,
+                        themedCSS: {
+                            overflow: 'auto',
+                            width: 'auto'
+                        },
                         msgContentCSS: {
                             overflow: 'hidden' //hide the unneeded scrollbars in ie7
                         },
@@ -726,11 +688,8 @@
 
                     var exceptionMessage = this.messageBlock(zindex, options);
 
-                    if (options.stacktrace) {
-                        var stackElement = $("<textarea rows='10' readonly='true' style='width:94%;padding:10px;'>" + options.stacktrace + "</textarea>").hide();
-                        var stackTitle = $("<p class='ui-widget-content ui-dialog-content' style='text-decoration: underline;'>Stacktrace</p>").click(function() { stackElement.toggle(); center(exceptionMessage); });
-
-                        exceptionMessage.append(stackTitle).append(stackElement);
+                    if (options.exceptionId) {
+                        exceptionMessage.append("<a href='" + resGlobal.ExceptiondetailUrl + options.exceptionId + "' target='_blank'>Details</a> ");
                     }
 
                     return exceptionMessage;
