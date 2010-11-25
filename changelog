@@ -1,0 +1,28 @@
+Changelog
+
+* Adjust center function to take a possible iframe into account
+* Add closeOnEscape option
+* separated the 'building blocks' iframe, overlay, messageblock from the other logic => easier to extend in the future
+* Add closeOnClick option
+* Add buttons option => created a buttonPane like in ui-dialog
+*
+* Add optional blockUI extention (see end of file)
+*   blockMessageType: default or exception
+*
+* Defined growlUI as a special messageBlockType => 'growl'
+*
+* add $.blockUI('unblock', window, opts); }; typed calls
+* minor fix for the header in a themed message => add ui-corner-top class
+* improve detection of full blocking + allow full blocking from within iframe => $(window.parent.top.window).block({ message: 'Full block test'});
+* add dialog messageBlockType => adds some extra css when showing some dialog as block
+* removedskipiframe offset and added centerWithIframeHorizontal option as replacement
+* added support for customized message block class name (default is "blockMsg").(see fwangel)
+* bugfix: make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
+* added support for customized button class name (default is "button").
+
+* append space to parent when the messageblock changes in size
+* used specifically when the site runs inside an iframe and we need to notify the parent iframe to resize
+* we can watch the content size and call the parent to resize
+* dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
+*
+* save & restore the onUnBlock callback  when install/remove the blockui
