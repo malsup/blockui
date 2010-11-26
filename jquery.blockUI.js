@@ -1,9 +1,9 @@
-﻿/*
+/*
 blockUI plugin for jquery
 http://github.com/RobinHerbots/blockui
 Copyright (c) 2010 Robin Herbots
 Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.1
+Version: 0.0.2
 
 This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http://malsup.com/jquery/block/)
 */
@@ -313,7 +313,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         var lyr1 = $.blockUI.iframe(z++, opts);
         var lyr2 = $.blockUI.overlay(z++, opts);
         opts = $.extend({}, opts, { full: full });
-        var lyr3 = $.blockUI._messageBlock(z, opts);
+        var lyr3 = $.blockUI._messageBlock(z + 10, opts);
 
         //create buttons
         if (opts.buttons) {
@@ -659,5 +659,4 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         */
         return html_node.ownerDocument.defaultView || html_node.ownerDocument.parentWindow;
     }
-
 })(jQuery);
