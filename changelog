@@ -26,3 +26,7 @@ Changelog
 * dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
 *
 * save & restore the onUnBlock callback  when install/remove the blockui
+
+version 0.0.2
+
+* viewable change is so we can show other elements between mask and viewable box
