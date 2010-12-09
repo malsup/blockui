@@ -3,7 +3,7 @@ blockUI plugin for jquery
 http://github.com/RobinHerbots/blockui
 Copyright (c) 2010 Robin Herbots
 Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.2
+Version: 0.0.3
 
 This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http://malsup.com/jquery/block/)
 */
@@ -49,7 +49,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         block: function(el, options) {
             var opts = $.extend({}, $.blockUI.defaults, options);
             var $el = $(el);
-            return $.blockUI('unblock', $el, { fadeOut: 0 }).each(function() {
+            return $el.each(function() {
                 if (this.style) {
                     if ($.css(this, 'position') == 'static')
                         this.style.position = 'relative';
@@ -191,7 +191,8 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             buttons: {}, // ex: buttons: { Ok: function() { $.unblockUI(); } }
             pageElement: 'body', // set to 'form' for this to work with all cases of ASP.NET WebForms
             blockMsgClass: 'blockMsg', // class name of the message block
-            buttonClass: 'button'// class name of the buttons
+            buttonClass: 'button', // class name of the buttons
+            unblockPreviousOnblock: true
         },
 
         //blockUI building blocks
@@ -285,7 +286,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         $(el).data('onUnblock', opts.onUnblock);
 
         // remove the current block (if there is one)
-        if (full && pageBlock)
+        if (opts.unblockPreviousOnblock)
             remove(window, { fadeOut: 0 });
 
         // if an existing element is being used as the blocking content then we capture
@@ -391,8 +392,13 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             var cb = opts.onBlock ? opts.onBlock : noOp;
             var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
             var cb2 = msg ? cb : noOp;
-            if (opts.showOverlay)
-                lyr2._fadeIn(opts.fadeIn, cb1);
+            if (opts.showOverlay) {
+                if (!($.browser.mozilla && /Linux/.test(navigator.platform))) {
+                    lyr2._fadeIn(opts.fadeIn, cb1);
+                } else {
+                    lyr2.show();
+                }
+            }
             if (msg)
                 lyr3._fadeIn(opts.fadeIn, cb2);
         }
