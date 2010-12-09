@@ -30,3 +30,7 @@ Changelog
 version 0.0.2
 
 * viewable change is so we can show other elements between mask and viewable box
+
+version 0.0.3
+
+* apply only if the fade is not in ff/linux - From: ricardojlrufino
