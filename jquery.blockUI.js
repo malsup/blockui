@@ -3,7 +3,7 @@ blockUI plugin for jquery
 http://github.com/RobinHerbots/blockui
 Copyright (c) 2010 Robin Herbots
 Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.3
+Version: 0.0.3a
 
 This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http://malsup.com/jquery/block/)
 */
@@ -108,6 +108,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             overlayCSS: {
                 backgroundColor: '#000',
                 opacity: 0.6,
+                filter: 'alpha (opacity = 60)',
                 cursor: 'wait'
             },
 
