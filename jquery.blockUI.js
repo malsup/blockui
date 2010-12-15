@@ -3,7 +3,7 @@ blockUI plugin for jquery
 http://github.com/RobinHerbots/blockui
 Copyright (c) 2010 Robin Herbots
 Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.3a
+Version: 0.0.3b
 
 This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http://malsup.com/jquery/block/)
 */
@@ -264,9 +264,6 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         }
     });
 
-
-
-
     // private data and functions follow...
 
     var pageBlock = null;
@@ -335,12 +332,6 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         $.each(layers, function() {
             this.appendTo($par);
         });
-
-        //make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
-        if (full && lyr3.outerHeight() > ($par.height() - $(window.parent.top).scrollTop())) {
-            var addHeight = lyr3.outerHeight() - ($par.height() - $(window.parent.top).scrollTop()) + 10;
-            $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
-        }
 
         if (opts.theme && opts.draggable && $.fn.draggable) {
             lyr3.draggable({
@@ -422,7 +413,13 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
                 setTimeout(focus, 20);
         }
 
-        center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
+        //make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
+        if (full && lyr3.outerHeight() > ($par.height() - $(window.parent.top).scrollTop())) {
+            var addHeight = lyr3.outerHeight() - ($par.height() - $(window.parent.top).scrollTop()) + 10;
+            $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
+            center(lyr3[0], { inside: el, withScrolling: false, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
+        } else
+            center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
 
         if (opts.timeout) {
             // auto-unblock
@@ -441,8 +438,9 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
                 if (full && lyr3.outerHeight() > ($par.height() - $(window.parent.top).scrollTop())) {
                     var addHeight = lyr3.outerHeight() - ($par.height() - $(window.parent.top).scrollTop()) + 10;
                     $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
-                }
-                center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
+                    center(lyr3[0], { inside: el, withScrolling: false, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
+                } else
+                    center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
             });
         }
     };
