@@ -1,10 +1,10 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.33 (29-MAR-2010)
+ * Version 2.37 (29-JAN-2011)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
- * Copyright (c) 2007-2008 M. Alsup
+ * Copyright (c) 2007-2010 M. Alsup
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
@@ -65,7 +65,7 @@ $.fn.unblock = function(opts) {
 	});
 };
 
-$.blockUI.version = 2.33; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.37; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
@@ -232,13 +232,13 @@ function install(el, opts) {
 	var lyr3, s;
 	if (opts.theme && full) {
 		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:fixed">' +
-				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
+				'<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
 	}
 	else if (opts.theme) {
 		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:absolute">' +
-				'<div class="ui-widget-header ui-dialog-titlebar blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
+				'<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
 	}
@@ -450,16 +450,17 @@ function handler(e) {
 	if (e.keyCode && e.keyCode == 9) {
 		if (pageBlock && e.data.constrainTabKey) {
 			var els = pageBlockEls;
-			var fwd = !e.shiftKey && e.target == els[els.length-1];
-			var back = e.shiftKey && e.target == els[0];
+			var fwd = !e.shiftKey && e.target === els[els.length-1];
+			var back = e.shiftKey && e.target === els[0];
 			if (fwd || back) {
 				setTimeout(function(){focus(back)},10);
 				return false;
 			}
 		}
 	}
+	var opts = e.data;
 	// allow events within the message content
-	if ($(e.target).parents('div.' + e.data.blockMsgClass).length > 0)
+	if ($(e.target).parents('div.' + opts.blockMsgClass).length > 0)
 		return true;
 
 	// allow events for content that is not being blocked
