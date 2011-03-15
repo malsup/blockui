@@ -3,7 +3,7 @@ blockUI plugin for jquery
 http://github.com/RobinHerbots/blockui
 Copyright (c) 2010 Robin Herbots
 Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.4
+Version: 0.0.5
 
 This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http://malsup.com/jquery/block/)
 */
@@ -111,24 +111,6 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
                 filter: 'alpha (opacity = 60)',
                 cursor: 'wait'
             },
-
-            // styles applied when using $.growlUI
-            growlCSS: {
-                width: '350px',
-                top: '10px',
-                left: '',
-                right: '10px',
-                border: 'none',
-                padding: '5px',
-                opacity: 0.6,
-                cursor: 'default',
-                color: '#fff',
-                backgroundColor: '#000',
-                '-webkit-border-radius': '10px',
-                '-moz-border-radius': '10px',
-                'border-radius': '10px'
-            },
-
             // IE issues: 'about:blank' fails on HTTPS and javascript:false is s-l-o-w
             // (hat tip to Jorge H. N. de Vasconcelos)
             iframeSrc: /^https/i.test(window.location.href || '') ? 'javascript:false' : 'about:blank',
@@ -367,7 +349,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
                     if (fixT) s.setExpression('top', fixT);
                 }
                 else if (opts.centerY) {
-                    if (full) s.setExpression('top', '(document.documentElement.clientHeight || document.body.clientHeight) / 2 - (this.offsetHeight / 2) + (blah = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop) + "px"');
+                    if (full) s.setExpression('top', '(document.documentElement.clientHeight || document.body.clientHeight) / 2 - (this.offsetHeight / 2) + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop) + "px"');
                     s.marginTop = 0;
                 }
                 else if (!opts.centerY && full) {
@@ -608,7 +590,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             iframeHorizontal: false //true => center in the iframe
         }, options);
         var props = { position: 'absolute' };
-        var iframeXOffset = 0, iframeYOffset = 0, insideX = options.inside;
+        var iframeXOffset = 0, iframeYOffset = 0, insideX = options.inside, $el = $(el);
 
         if (options.iframe && options.withScrolling) {
             if (window.parent && window.parent.document) {
@@ -636,20 +618,25 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
                 }
             }
         }
+        var top = $el.offset().top;
         if (options.vertical) {
-            var top = (($(options.inside).height() - $(el).outerHeight()) / 2) - iframeYOffset;
+            top = (($(options.inside).height() - $el.outerHeight()) / 2) - iframeYOffset;
             if (options.withScrolling) top += $(options.inside).scrollTop() || 0;
-            top = (top > options.minY ? top : options.minY);
-            $.extend(props, { top: top + 'px' });
         }
+        top = (top > options.minY ? top : options.minY);
+        $.extend(props, { top: top + 'px' });
+
+        var left = $el.offset().left;
         if (options.horizontal) {
-            var left = (($(insideX).width() - $(el).outerWidth()) / 2) - iframeXOffset;
+            left = (($(insideX).width() - $el.outerWidth()) / 2) - iframeXOffset;
             if (options.withScrolling) left += $(insideX).scrollLeft() || 0;
-            left = (left > options.minX ? left : options.minX);
-            $.extend(props, { left: left + 'px' });
         }
-        if (options.transition > 0) $(el).animate(props, options.transition);
-        else $(el).css(props);
+        left = (left > options.minX ? left : options.minX);
+        $.extend(props, { left: left + 'px' });
+
+        if (options.transition > 0) $el.animate(props, options.transition);
+        else $el.css(props);
+
     };
 
     function sz(el, p) {
