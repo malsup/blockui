@@ -1,9 +1,9 @@
-﻿/*
+/*
 blockUI plugin extentions for jquery
 http://github.com/RobinHerbots/blockui
 Copyright (c) 2010 Robin Herbots
 Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.1
+Version: 0.0.2
 */
 
 (function($) {
@@ -45,13 +45,10 @@ Version: 0.0.1
                         closeOnEscape: true
                     });
 
-                       var exceptionMessage = this.messageBlock(zindex, options);
+                    var exceptionMessage = this.messageBlock(zindex, options);
 
-                    if (options.stacktrace) {
-                        var stackElement = $("<textarea rows='10' readonly='true' style='width:94%;padding:10px;'>" + options.stacktrace + "</textarea>").hide();
-                        var stackTitle = $("<p class='ui-widget-content ui-dialog-content' style='text-decoration: underline;'>Stacktrace</p>").click(function() { stackElement.toggle(); center(exceptionMessage); });
-
-                        exceptionMessage.append(stackTitle).append(stackElement);
+                    if (options.exceptionId) {
+                        exceptionMessage.append("<a href='" + resGlobal.ExceptiondetailUrl + options.exceptionId + "' target='_blank'>Details</a> ");
                     }
 
                     return exceptionMessage;
@@ -66,10 +63,25 @@ Version: 0.0.1
                         title: null,
                         fadeIn: 700,
                         fadeOut: 1000,
+                        centerX: false,
                         centerY: false,
                         timeout: options.timeout,
                         showOverlay: false,
-                        css: options.growlCSS
+                        css: {
+                            width: '350px',
+                            top: '10px',
+                            left: '',
+                            right: '10px',
+                            border: 'none',
+                            padding: '5px',
+                            opacity: 0.6,
+                            cursor: 'default',
+                            color: '#fff',
+                            backgroundColor: '#000',
+                            '-webkit-border-radius': '10px',
+                            '-moz-border-radius': '10px',
+                            'border-radius': '10px'
+                        }
                     });
                     return this.messageBlock(zindex, options);
                     break;
