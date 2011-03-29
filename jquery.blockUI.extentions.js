@@ -94,7 +94,10 @@ Version: 0.0.2
                         msgContentCSS: {
                             overflow: 'hidden' //hide the unneeded scrollbars in ie7
                         },
-                        theme: true
+                        theme: true,
+                        fadeIn: 1000,
+                        fadeOut: 1000,
+                        slideDown: true
                     });
 
                     return this.messageBlock(zindex, options);
