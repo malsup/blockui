@@ -65,7 +65,7 @@ $.fn.unblock = function(opts) {
 	});
 };
 
-$.blockUI.version = 2.37; // 2nd generation blocking at no extra cost!
+$.blockUI.version = 2.38; // 2nd generation blocking at no extra cost!
 
 // override these in your code to change the default behavior and style
 $.blockUI.defaults = {
