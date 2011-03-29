@@ -34,3 +34,8 @@ version 0.0.2
 version 0.0.3
 
 * apply only if the fade is not in ff/linux - From: ricardojlrufino
+
+version 0.0.7
+
+* Adds possibility for drop-in modals.
+ 
