@@ -174,6 +174,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             buttons: {}, // ex: buttons: { Ok: function() { $.unblockUI(); } }
             pageElement: 'body', // set to 'form' for this to work with all cases of ASP.NET WebForms
             blockMsgClass: 'blockMsg', // class name of the message block
+            overlayClass: 'blockOverlay ui-widget-overlay',
             buttonClass: 'button', // class name of the buttons
             unblockPreviousOnblock: true
         },
@@ -188,8 +189,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         },
         overlay: function(zindex, options) {
             var opts = $.extend({}, $.blockUI.defaults, options);
-
-            return $('<div class="blockUI blockOverlay" style="z-index:' + zindex + ';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
+            return $('<div class="blockUI ' + options.overlayClass + '" style="z-index:' + zindex + ';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
         },
         _messageBlock: function(zindex, options) { //this function is used to hook into the messageBlock generation when creating an extention for the messageBlock
             return this.messageBlock(zindex, options);
