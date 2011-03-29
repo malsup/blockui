@@ -388,7 +388,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             if (msg) {
                 var lyr3Top = lyr3.css('top');
                 lyr3.css('top', -lyr3.outerHeight());
-                lyr3.show().animate({ top: lyr3Top }, opts.fadeIn, cb2);
+                lyr3.show(function() { $(this).animate({ top: lyr3Top }, opts.fadeIn, cb2) });
             }
         }
         else if (opts.fadeIn) {
