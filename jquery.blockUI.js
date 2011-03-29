@@ -3,7 +3,7 @@ blockUI plugin for jquery
 http://github.com/RobinHerbots/blockui
 Copyright (c) 2010 Robin Herbots
 Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php)
-Version: 0.0.5
+Version: 0.0.7
 
 This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http://malsup.com/jquery/block/)
 */
@@ -140,9 +140,9 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
 
             // fadeIn time in millis; set to 0 to disable fadeIn on block
             fadeIn: 200,
-
             // fadeOut time in millis; set to 0 to disable fadeOut on unblock
             fadeOut: 400,
+            slideDown: false, //slide instead of fade
 
             // time in millis to wait before auto-unblocking; set to 0 to disable auto-unblock
             timeout: 0,
@@ -360,9 +360,34 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             });
         }
 
+
+
         if (($.browser.msie || opts.forceIframe) && opts.showOverlay)
             lyr1.show(); // opacity is zero
-        if (opts.fadeIn) {
+
+        //make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
+        var lyr3Height = lyr3.outerHeight(true), parHeight = $par.height();
+        if (full && lyr3Height > (parHeight - $(window.parent.top).scrollTop())) {
+            var addHeight = lyr3Height - (parHeight - $(window.parent.top).scrollTop()) + 10;
+            $("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }).appendTo($par);
+            center(lyr3[0], { inside: el, withScrolling: false, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
+        } else
+            center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
+            
+        if (opts.slideDown) {
+            var cb = opts.onBlock ? opts.onBlock : noOp;
+            var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
+            var cb2 = msg ? cb : noOp;
+            if (opts.showOverlay)
+                lyr2._fadeIn(opts.fadeIn, cb1);
+            if (msg) {
+                var lyr3Top = lyr3.css('top');
+                lyr3.css('top', -lyr3.outerHeight());
+                lyr3.show();
+                lyr3.animate({ top: lyr3Top }, opts.fadeIn, cb2);
+            }
+        }
+        else if (opts.fadeIn) {
             var cb = opts.onBlock ? opts.onBlock : noOp;
             var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
             var cb2 = msg ? cb : noOp;
@@ -395,13 +420,6 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
                 setTimeout(focus, 20);
         }
 
-        //make sure the parent is bigger then the messageblock, fixes issue that some parts of the messageblock are inaccessable
-        if (full && lyr3.outerHeight() > ($par.height() - $(window.parent.top).scrollTop())) {
-            var addHeight = lyr3.outerHeight() - ($par.height() - $(window.parent.top).scrollTop()) + 10;
-            $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
-            center(lyr3[0], { inside: el, withScrolling: false, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
-        } else
-            center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
 
         if (opts.timeout) {
             // auto-unblock
@@ -417,9 +435,10 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         //dependency to resize plugin - http://benalman.com/projects/jquery-resize-plugin/ when centerWithIframe true
         if (opts.centerWithIframe) {
             $(lyr3).resize(function() {
-                if (full && lyr3.outerHeight() > ($par.height() - $(window.parent.top).scrollTop())) {
-                    var addHeight = lyr3.outerHeight() - ($par.height() - $(window.parent.top).scrollTop()) + 10;
-                    $par.append($("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }));
+                var lyr3Height = lyr3.outerHeight(true), parHeight = $par.height();
+                if (full && lyr3Height > (parHeight - $(window.parent.top).scrollTop())) {
+                    var addHeight = lyr3Height - (parHeight - $(window.parent.top).scrollTop()) + 10;
+                    $("<p></p>").addClass('blockUI').css({ 'height': addHeight + 'px' }).appendTo($par);
                     center(lyr3[0], { inside: el, withScrolling: false, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
                 }
             });
@@ -485,7 +504,14 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
         if (full)
             pageBlock = pageBlockEls = null;
 
-        if (opts.fadeOut) {
+        if (opts.slideDown) {
+            var lyr3 = els.filter('.blockPage, .blockElement');
+            lyr3.animate({ top: -lyr3.outerHeight() }, opts.fadeOut);
+            var els = els.not(lyr3);
+            els.fadeOut(opts.fadeOut);
+            setTimeout(function() { reset(els.add(lyr3), data, opts, el); }, opts.fadeOut);
+        }
+        else if (opts.fadeOut) {
             els.fadeOut(opts.fadeOut);
             setTimeout(function() { reset(els, data, opts, el); }, opts.fadeOut);
         }
