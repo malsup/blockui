@@ -386,9 +386,14 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             if (opts.showOverlay)
                 lyr2._fadeIn(opts.fadeIn, cb1);
             if (msg) {
-                var lyr3Top = lyr3.css('top');
+                var lyr3Top = lyr3.css('top').replace('px', '');
                 lyr3.css('top', -lyr3.outerHeight());
-                lyr3.show(function() { $(this).animate({ top: lyr3Top }, opts.fadeIn, cb2) });
+                //workaround for ff bug resettting scrolltop of parentcontainer on jquery show
+                var originWindowTopScrollTop = $(window.parent.top).scrollTop();
+                lyr3.show(function() {
+                    lyr3Top = parseInt(lyr3Top) - (originWindowTopScrollTop - $(window.parent.top).scrollTop());
+                    $(this).animate({ top: lyr3Top + 'px' }, opts.fadeIn, cb2);
+                });
             }
         }
         else if (opts.fadeIn) {
