@@ -95,7 +95,7 @@ Version: 0.0.2
                             overflow: 'hidden' //hide the unneeded scrollbars in ie7
                         },
                         theme: true,
-                        fadeIn: 1000,
+                        fadeIn: 900,
                         fadeOut: 1000,
                         slideDown: true
                     });
