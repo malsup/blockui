@@ -388,8 +388,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             if (msg) {
                 var lyr3Top = lyr3.css('top');
                 lyr3.css('top', -lyr3.outerHeight());
-                lyr3.show();
-                lyr3.animate({ top: lyr3Top }, opts.fadeIn, cb2);
+                lyr3.show().animate({ top: lyr3Top }, opts.fadeIn, cb2);
             }
         }
         else if (opts.fadeIn) {
@@ -632,34 +631,32 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
 
         if (options.iframe && options.withScrolling) {
             if (window.parent && window.parent.document) {
-                if ($(window.parent.top).scrollTop() > 0) {
-                    options.inside = window.parent.top;
-                    var iframes = $('iframe', options.inside.document);
-                    var i = iframes.length;
-                    while (i--) {
-                        if (iframes[i].contentDocument) {
-                            doc = iframes[i].contentDocument;
-                        } else {
-                            doc = iframes[i].contentWindow.document;
-                        }
-                        if (doc === document) {
-                            //located our iframe!
-                            iframeXOffset = $(iframes[i]).offset().left;
-                            iframeYOffset = $(iframes[i]).offset().top;
-                            break;
-                        }
-                    };
+                options.inside = window.parent.top;
+                var iframes = $('iframe', options.inside.document);
+                var i = iframes.length;
+                while (i--) {
+                    if (iframes[i].contentDocument) {
+                        doc = iframes[i].contentDocument;
+                    } else {
+                        doc = iframes[i].contentWindow.document;
+                    }
+                    if (doc === document) {
+                        //located our iframe!
+                        iframeXOffset = $(iframes[i]).offset().left;
+                        iframeYOffset = $(iframes[i]).offset().top;
+                        break;
+                    }
+                };
 
-                    if (options.iframeHorizontal == false)
-                        insideX = options.inside;
-                    else iframeXOffset = 0;
-                }
+                if (options.iframeHorizontal == false)
+                    insideX = options.inside;
+                else iframeXOffset = 0;
             }
         }
         var top = $el.offset().top;
         if (options.vertical) {
             top = (($(options.inside).height() - $el.outerHeight()) / 2) - iframeYOffset;
-            if (options.withScrolling) top += $(options.inside).scrollTop() || 0;
+            if (options.withScrolling) top += $(options.inside).scrollTop() - iframeYOffset || 0;
         }
         top = (top > options.minY ? top : options.minY);
         $.extend(props, { top: top + 'px' });
