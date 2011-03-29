@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.37 (29-JAN-2011)
+ * Version 2.38 (29-MAR-2011)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -227,8 +227,11 @@ function install(el, opts) {
 	var lyr1 = ($.browser.msie || opts.forceIframe) 
 		? $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>')
 		: $('<div class="blockUI" style="display:none"></div>');
-	var lyr2 = $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
 	
+	var lyr2 = opts.theme 
+	 	? $('<div class="blockUI blockOverlay ui-widget-overlay" style="z-index:'+ (z++) +';display:none"></div>')
+	 	: $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
+
 	var lyr3, s;
 	if (opts.theme && full) {
 		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:fixed">' +
@@ -261,7 +264,7 @@ function install(el, opts) {
 	}
 
 	// style the overlay
-	if (!opts.applyPlatformOpacityRules || !($.browser.mozilla && /Linux/.test(navigator.platform)))
+	if (!opts.theme && (!opts.applyPlatformOpacityRules || !($.browser.mozilla && /Linux/.test(navigator.platform))))
 		lyr2.css(opts.overlayCSS);
 	lyr2.css('position', full ? 'fixed' : 'absolute');
 
