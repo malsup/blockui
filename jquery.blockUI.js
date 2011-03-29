@@ -373,7 +373,12 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
             center(lyr3[0], { inside: el, withScrolling: false, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
         } else
             center(lyr3[0], { inside: el, horizontal: opts.centerX, vertical: opts.centerY, iframe: opts.centerWithIframe, iframeHorizontal: opts.centerWithIframeHorizontal });
-            
+
+        //save fadeOut for use on unblock
+        $(el).data('blockUI.fadeOut', opts.fadeOut);
+        //save slideDown for use on unblock
+        $(el).data('blockUI.slideDown', opts.slideDown);
+
         if (opts.slideDown) {
             var cb = opts.onBlock ? opts.onBlock : noOp;
             var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
@@ -503,6 +508,13 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
 
         if (full)
             pageBlock = pageBlockEls = null;
+
+        //restore fadeOut value
+        var fadeOut = $(el).data('blockUI.fadeOut');
+        opts.fadeOut = fadeOut ? fadeOut : opts.fadeOut;
+        //restore slideDown value
+        var slideDown = $(el).data('blockUI.slideDown');
+        opts.slideDown = slideDown ? slideDown : opts.slideDown;
 
         if (opts.slideDown) {
             var lyr3 = els.filter('.blockPage, .blockElement');
