@@ -390,7 +390,7 @@ This plugin is based on the blockUI plugin (v2.33) written by Mike Alsup (http:/
                 lyr3.css('top', -lyr3.outerHeight());
                 //workaround for ff bug resettting scrolltop of parentcontainer on jquery show
                 var originWindowTopScrollTop = $(window.parent.top).scrollTop();
-                lyr3.show(function() {
+                lyr3.show(0, function() {
                     lyr3Top = parseInt(lyr3Top) - (originWindowTopScrollTop - $(window.parent.top).scrollTop());
                     $(this).animate({ top: lyr3Top + 'px' }, opts.fadeIn, cb2);
                 });
