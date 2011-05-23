@@ -217,6 +217,7 @@ function install(el, opts) {
 			data.parent.removeChild(node);
 	}
 
+	$(el).data('blockUI.onUnblock', opts.onUnblock);
 	var z = opts.baseZ;
 
 	// blockUI uses 3 layers for blocking, for simplicity they are all used on every platform;
@@ -234,22 +235,22 @@ function install(el, opts) {
 
 	var lyr3, s;
 	if (opts.theme && full) {
-		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:fixed">' +
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+(z+10)+';display:none;position:fixed">' +
 				'<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
 	}
 	else if (opts.theme) {
-		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+z+';display:none;position:absolute">' +
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+(z+10)+';display:none;position:absolute">' +
 				'<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>' +
 				'<div class="ui-widget-content ui-dialog-content"></div>' +
 			'</div>';
 	}
 	else if (full) {
-		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage" style="z-index:'+z+';display:none;position:fixed"></div>';
-	}			
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage" style="z-index:'+(z+10)+';display:none;position:fixed"></div>';
+	}			 
 	else {
-		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement" style="z-index:'+z+';display:none;position:absolute"></div>';
+		s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement" style="z-index:'+(z+10)+';display:none;position:absolute"></div>';
 	}
 	lyr3 = $(s);
 
@@ -386,7 +387,12 @@ function remove(el, opts) {
 	}
 	opts = $.extend({}, $.blockUI.defaults, opts || {});
 	bind(0, el, opts); // unbind events
-	
+
+	if (opts.onUnblock === null) {
+		opts.onUnblock = $el.data('blockUI.onUnblock');
+		$el.removeData('blockUI.onUnblock');
+	}
+
 	var els;
 	if (full) // crazy selector to handle odd field errors in ie6/7
 		els = $('body').children().filter('.blockUI').add('body > .blockUI');
