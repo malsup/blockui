@@ -1,4 +1,4 @@
-﻿/*!
+﻿﻿/*!
  * jQuery blockUI plugin
  * Version 2.39 (23-MAY-2011)
  * @requires jQuery v1.2.3 or later
@@ -181,7 +181,13 @@ $.blockUI.defaults = {
 	quirksmodeOffsetHack: 4,
 
 	// class name of the message block
-	blockMsgClass: 'blockMsg'
+	blockMsgClass: 'blockMsg',
+	
+	//defines delay for making overlay visible (non-trasparent) on the screen
+	showOverlayDelay: 0,
+	
+	//defines whether running animation should be stopped before uninstalling screen blocker
+	stopAnimationInProgress: false
 };
 
 // private data and functions follow...
@@ -336,22 +342,52 @@ function install(el, opts) {
 
 	if (($.browser.msie || opts.forceIframe) && opts.showOverlay)
 		lyr1.show(); // opacity is zero
+
+	var showBlocker;
+
 	if (opts.fadeIn) {
 		var cb = opts.onBlock ? opts.onBlock : noOp;
 		var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
 		var cb2 = msg ? cb : noOp;
-		if (opts.showOverlay)
-			lyr2._fadeIn(opts.fadeIn, cb1);
-		if (msg)
-			lyr3._fadeIn(opts.fadeIn, cb2);
+
+		showBlocker = function() {
+			if (opts.showOverlay)
+				lyr2._fadeIn(opts.fadeIn, cb1);
+			if (msg)
+				lyr3._fadeIn(opts.fadeIn, cb2);
+		};
 	}
 	else {
-		if (opts.showOverlay)
+		showBlocker = function() {
+			if (opts.showOverlay)
+				lyr2.show();
+			if (msg)
+				lyr3.show();
+			if (opts.onBlock)
+				opts.onBlock();
+		};
+	}
+
+	if (opts.showOverlayDelay) {
+		if (opts.showOverlay) {
+			lyr2.data('initialOpacity', lyr2.css('opacity'));
+			lyr2.css('opacity', 0.0);
 			lyr2.show();
-		if (msg)
-			lyr3.show();
-		if (opts.onBlock)
-			opts.onBlock();
+		}
+
+		var showBlockerDelayed = function() {
+			if (opts.showOverlay) {
+				lyr2.hide();
+				lyr2.css('opacity', lyr2.data('initialOpacity'));
+			}
+
+			showBlocker();
+		};
+
+		var delayTO = setTimeout(showBlockerDelayed, opts.showOverlayDelay);
+		$(el).data('blockUI.delayTimeout', delayTO);
+	} else {
+		showBlocker();
 	}
 
 	// bind key and mouse events
@@ -375,16 +411,23 @@ function install(el, opts) {
 	}
 };
 
+function clearSavedTimeout($el, attr) {
+	var to = $el.data(attr);
+	if (to) {
+		clearTimeout(to);
+		$el.removeData(attr);
+	}
+};
+
 // remove the block
 function remove(el, opts) {
 	var full = (el == window);
 	var $el = $(el);
 	var data = $el.data('blockUI.history');
-	var to = $el.data('blockUI.timeout');
-	if (to) {
-		clearTimeout(to);
-		$el.removeData('blockUI.timeout');
-	}
+
+	clearSavedTimeout($el, 'blockUI.timeout');
+	clearSavedTimeout($el, 'blockUI.delayTimeout');
+
 	opts = $.extend({}, $.blockUI.defaults, opts || {});
 	bind(0, el, opts); // unbind events
 
@@ -403,6 +446,9 @@ function remove(el, opts) {
 		pageBlock = pageBlockEls = null;
 
 	if (opts.fadeOut) {
+		if (opts.stopAnimationInProgress) {
+			els.stop();
+		}
 		els.fadeOut(opts.fadeOut);
 		setTimeout(function() { reset(els,data,opts,el); }, opts.fadeOut);
 	}
