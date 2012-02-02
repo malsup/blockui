@@ -380,6 +380,7 @@ function remove(el, opts) {
 	var full = (el == window);
 	var $el = $(el);
 	var data = $el.data('blockUI.history');
+	$(el).removeData('blockUI.history');
 	var to = $el.data('blockUI.timeout');
 	if (to) {
 		clearTimeout(to);
@@ -423,7 +424,6 @@ function reset(els,data,opts,el) {
 		data.el.style.position = data.position;
 		if (data.parent)
 			data.parent.appendChild(data.el);
-		$(el).removeData('blockUI.history');
 	}
 
 	if (typeof opts.onUnblock == 'function')
