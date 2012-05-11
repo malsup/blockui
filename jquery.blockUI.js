@@ -1,6 +1,6 @@
 ﻿/*!
  * jQuery blockUI plugin
- * Version 2.41 (03-MAY-2012)
+ * Version 2.42 (11-MAY-2012)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -50,7 +50,15 @@
 
 		// plugin method for blocking element content
 		$.fn.block = function(opts) {
-			return this.unblock({ fadeOut: 0 }).each(function() {
+			var fullOpts = $.extend({}, $.blockUI.defaults, opts || {});
+			this.each(function() {
+				var $el = $(this);
+				if (fullOpts.ignoreIfBlocked && $el.data('blockUI.isBlocked'))
+					return;
+				$el.unblock({ fadeOut: 0 });
+			});
+
+			return this.each(function() {
 				if ($.css(this,'position') == 'static')
 					this.style.position = 'relative';
 				if ($.browser.msie)
@@ -66,7 +74,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.41; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.42; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -182,7 +190,10 @@
 			quirksmodeOffsetHack: 4,
 
 			// class name of the message block
-			blockMsgClass: 'blockMsg'
+			blockMsgClass: 'blockMsg',
+
+			// if it is already blocked, then ignore it (don't unblock and reblock)
+			ignoreIfBlocked: false
 		};
 
 		// private data and functions follow...
@@ -191,12 +202,17 @@
 		var pageBlockEls = [];
 
 		function install(el, opts) {
+			var css, themedCSS;
 			var full = (el == window);
-			var msg = opts && opts.message !== undefined ? opts.message : undefined;
+			var msg = (opts && opts.message !== undefined ? opts.message : undefined);
 			opts = $.extend({}, $.blockUI.defaults, opts || {});
+
+			if (opts.ignoreIfBlocked && $(el).data('blockUI.isBlocked'))
+				return;
+
 			opts.overlayCSS = $.extend({}, $.blockUI.defaults.overlayCSS, opts.overlayCSS || {});
-			var css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
-			var themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
+			css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
+			themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
 			msg = msg === undefined ? opts.message : msg;
 
 			// remove the current block (if there is one)
@@ -438,8 +454,8 @@
 			// don't bother unbinding if there is nothing to unbind
 			if (!b && (full && !pageBlock || !full && !$el.data('blockUI.isBlocked')))
 				return;
-			if (!full)
-				$el.data('blockUI.isBlocked', b);
+
+			$el.data('blockUI.isBlocked', b);
 
 			// don't bind events when overlay is not in use or if bindEvents is false
 			if (!opts.bindEvents || (b && !opts.showOverlay))
