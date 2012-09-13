@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.44 (10-SEP-2012)
+ * Version 2.45 (13-SEP-2012)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -422,7 +422,7 @@
 			if (full) // crazy selector to handle odd field errors in ie6/7
 				els = $('body').children().filter('.blockUI').add('body > .blockUI');
 			else
-				els = $('.blockUI', el);
+				els = $('>.blockUI', el);
 
 			if (full)
 				pageBlock = pageBlockEls = null;
