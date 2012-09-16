@@ -326,7 +326,7 @@
 				}
 
 				// simulate fixed position
-				$.each([lyr1,lyr2,lyr3], function(i,o) {
+				$.each(layers, function(i,o) {
 					var s = o[0].style;
 					s.position = 'absolute';
 					if (i < 2) {
@@ -422,7 +422,7 @@
 			if (full) // crazy selector to handle odd field errors in ie6/7
 				els = $('body').children().filter('.blockUI').add('body > .blockUI');
 			else
-				els = $('>.blockUI', el);
+				els = $el.find('>.blockUI');
 
 			if (full)
 				pageBlock = pageBlockEls = null;
