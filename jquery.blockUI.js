@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.50 (17-SEP-2012)
+ * Version 2.51 (17-SEP-2012)
  * @requires jQuery v1.2.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -33,34 +33,19 @@
         var mode = document.documentMode || 0;
         // var setExpr = msie && (($.browser.version < 8 && !mode) || mode < 8);
         var setExpr = $.isFunction( document.createElement('div').style.setExpression );
-        var addCSStoGROW;
+         
+         // can pick a custom class.... ( true/false)
+         // If set true then you must provide a class name (type) else you can just leave it blank....
+        var DifferentCssClasses = false;
 
         // global $ methods for blocking/unblocking the entire page
         $.blockUI   = function(opts) { install(window, opts); };
         $.unblockUI = function(opts) { remove(window, opts); };
 
         // convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
-        $.growlUI = function(title, type, message, timeout, onClose) {
-            
-            switch(type) // Different Classes for the Grow....
-            {
-                case 'msg':     addCSStoGROW    = 'growlUI_Msg';
-                break;
-                case 'succes':  addCSStoGROW    = 'growlUI_Succes';
-                break;
-                case 'error':   addCSStoGROW    = 'growlUI_Error';
-                break;
-                case 'warning': addCSStoGROW    = 'growlUI_Warning';
-                break;
-                case 'notice':  addCSStoGROW    = 'growlUI_Notice';
-                break;
-                case 'unknown': addCSStoGROW    = 'growlUI_Unknown';
-                break;
+        $.growlUI = function(title, type , message, timeout, onClose) {
 
-                default:        addCSStoGROW    = 'growlUI';
-            }
-
-                var $m = $('<div class="'+addCSStoGROW+'"></div>');
+                var $m = ( DifferentCssClasses ? $('<div class="'+type+'"></div>') : $('<div class="growlUI"></div>') );
                 if (title) $m.append('<h1>'+title+'</h1>');
                 if (message) $m.append('<h2>'+message+'</h2>');
                 if (timeout === undefined) timeout = 3000;
