@@ -330,9 +330,9 @@
 					var s = o[0].style;
 					s.position = 'absolute';
 					if (i < 2) {
-						full ? s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (jQuery.boxModel?0:'+opts.quirksmodeOffsetHack+') + "px"')
+						full ? s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (jQuery.support.boxModel?0:'+opts.quirksmodeOffsetHack+') + "px"')
 							 : s.setExpression('height','this.parentNode.offsetHeight + "px"');
-						full ? s.setExpression('width','jQuery.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"')
+						full ? s.setExpression('width','jQuery.support.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"')
 							 : s.setExpression('width','this.parentNode.offsetWidth + "px"');
 						if (fixL) s.setExpression('left', fixL);
 						if (fixT) s.setExpression('top', fixT);
