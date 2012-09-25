@@ -1,7 +1,7 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.45 (13-SEP-2012)
- * @requires jQuery v1.2.3 or later
+ * Version 2.46 (25-SEP-2012)
+ * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
  * Copyright (c) 2007-2012 M. Alsup
@@ -16,9 +16,9 @@
 "use strict";
 
 	function setup($) {
-		if (/1\.(0|1|2)\.(0|1|2)/.test($.fn.jquery) || /^1.1/.test($.fn.jquery)) {
+		if (/^1\.(0|1|2)/.test($.fn.jquery)) {
 			/*global alert:true */
-			alert('blockUI requires jQuery v1.2.3 or later!  You are using v' + $.fn.jquery);
+			alert('blockUI requires jQuery v1.3 or later!  You are using v' + $.fn.jquery);
 			return;
 		}
 
@@ -312,14 +312,14 @@
 			}
 
 			// ie7 must use absolute positioning in quirks mode and to account for activex issues (when scrolling)
-			var expr = setExpr && (!$.boxModel || $('object,embed', full ? null : el).length > 0);
+			var expr = setExpr && (!$.support.boxModel || $('object,embed', full ? null : el).length > 0);
 			if (ie6 || expr) {
 				// give body 100% height
-				if (full && opts.allowBodyStretch && $.boxModel)
+				if (full && opts.allowBodyStretch && $.support.boxModel)
 					$('html,body').css('height','100%');
 
 				// fix ie6 issue when blocked element has a border width
-				if ((ie6 || !$.boxModel) && !full) {
+				if ((ie6 || !$.support.boxModel) && !full) {
 					var t = sz(el,'borderTopWidth'), l = sz(el,'borderLeftWidth');
 					var fixT = t ? '(0 - '+t+')' : 0;
 					var fixL = l ? '(0 - '+l+')' : 0;
