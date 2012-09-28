@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.46 (25-SEP-2012)
+ * Version 2.47 (28-SEP-2012)
  * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -77,15 +77,15 @@
 			});
 		};
 
-		$.blockUI.version = 2.42; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.47; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
 			// message displayed when blocking (use null for no message)
 			message:  '<h1>Please wait...</h1>',
 
-			title: null,	  // title string; only used when theme == true
-			draggable: true,  // only used when theme == true (requires jquery-ui.js to be loaded)
+			title: null,		// title string; only used when theme == true
+			draggable: true,	// only used when theme == true (requires jquery-ui.js to be loaded)
 
 			theme: false, // set to true to use with jQuery UI themes
 
@@ -114,9 +114,9 @@
 
 			// styles for the overlay
 			overlayCSS:  {
-				backgroundColor: '#000',
-				opacity:		 0.6,
-				cursor:			 'wait'
+				backgroundColor:	'#000',
+				opacity:			0.6,
+				cursor:				'wait'
 			},
 
 			// styles applied when using $.growlUI
@@ -138,6 +138,7 @@
 
 			// IE issues: 'about:blank' fails on HTTPS and javascript:false is s-l-o-w
 			// (hat tip to Jorge H. N. de Vasconcelos)
+			/*jshint scripturl:true */
 			iframeSrc: /^https/i.test(window.location.href || '') ? 'javascript:false' : 'about:blank',
 
 			// force usage of iframe in non-IE browsers (handy for blocking applets)
@@ -187,7 +188,7 @@
 			// callback method invoked when unblocking has completed; the callback is
 			// passed the element that has been unblocked (which is the window object for page
 			// blocks) and the options that were passed to the unblock call:
-			//	 onUnblock(element, options)
+			//	onUnblock(element, options)
 			onUnblock: null,
 
 			// don't ask; if you really must know: http://groups.google.com/group/jquery-en/browse_thread/thread/36640a8730503595/2f6a79a77a78e493#2f6a79a77a78e493
@@ -245,22 +246,23 @@
 			// layer1 is the iframe layer which is used to supress bleed through of underlying content
 			// layer2 is the overlay layer which has opacity and a wait cursor (by default)
 			// layer3 is the message content that is displayed while blocking
+			var lyr1, lyr2, lyr3, s;
+			if (msie || opts.forceIframe)
+				lyr1 = $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>');
+			else
+				lyr1 = $('<div class="blockUI" style="display:none"></div>');
 
-			var lyr1 = (msie || opts.forceIframe)
-				? $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>')
-				: $('<div class="blockUI" style="display:none"></div>');
+			if (opts.theme)
+				lyr2 = $('<div class="blockUI blockOverlay ui-widget-overlay" style="z-index:'+ (z++) +';display:none"></div>');
+			else
+				lyr2 = $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
 
-			var lyr2 = opts.theme
-				? $('<div class="blockUI blockOverlay ui-widget-overlay" style="z-index:'+ (z++) +';display:none"></div>')
-				: $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
-
-			var lyr3, s;
 			if (opts.theme && full) {
 				s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+(z+10)+';display:none;position:fixed">';
 				if ( opts.title ) {
 					s += '<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>';
 				}
-		        s += '<div class="ui-widget-content ui-dialog-content"></div>';
+				s += '<div class="ui-widget-content ui-dialog-content"></div>';
 				s += '</div>';
 			}
 			else if (opts.theme) {
@@ -290,8 +292,8 @@
 			}
 
 			// style the overlay
-			// if (!opts.theme && (!opts.applyPlatformOpacityRules))
-			lyr2.css(opts.overlayCSS);
+			if (!opts.theme /*&& (!opts.applyPlatformOpacityRules)*/)
+				lyr2.css(opts.overlayCSS);
 			lyr2.css('position', full ? 'fixed' : 'absolute');
 
 			// make iframe layer transparent in IE
@@ -330,10 +332,14 @@
 					var s = o[0].style;
 					s.position = 'absolute';
 					if (i < 2) {
-						full ? s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (jQuery.support.boxModel?0:'+opts.quirksmodeOffsetHack+') + "px"')
-							 : s.setExpression('height','this.parentNode.offsetHeight + "px"');
-						full ? s.setExpression('width','jQuery.support.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"')
-							 : s.setExpression('width','this.parentNode.offsetWidth + "px"');
+						if (full)
+							s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (jQuery.support.boxModel?0:'+opts.quirksmodeOffsetHack+') + "px"');
+						else
+							s.setExpression('height','this.parentNode.offsetHeight + "px"');
+						if (full)
+							s.setExpression('width','jQuery.support.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"');
+						else
+							s.setExpression('width','this.parentNode.offsetWidth + "px"');
 						if (fixL) s.setExpression('left', fixL);
 						if (fixT) s.setExpression('top', fixT);
 					}
@@ -394,7 +400,10 @@
 			if (opts.timeout) {
 				// auto-unblock
 				var to = setTimeout(function() {
-					full ? $.unblockUI(opts) : $(el).unblock(opts);
+					if (full)
+						$.unblockUI(opts);
+					else
+						$(el).unblock(opts);
 				}, opts.timeout);
 				$(el).data('blockUI.timeout', to);
 			}
@@ -471,11 +480,14 @@
 
 			// bind anchors and inputs for mouse and key events
 			var events = 'mousedown mouseup keydown keypress';
-			b ? $(document).bind(events, opts, handler) : $(document).unbind(events, handler);
+			if (b)
+				$(document).bind(events, opts, handler);
+			else
+				$(document).unbind(events, handler);
 
 		// former impl...
-		//	   var $e = $('a,:input');
-		//	   b ? $e.bind(events, opts, handler) : $e.unbind(events, handler);
+		//		var $e = $('a,:input');
+		//		b ? $e.bind(events, opts, handler) : $e.unbind(events, handler);
 		}
 
 		// event handler to suppress keyboard/mouse events when blocking
