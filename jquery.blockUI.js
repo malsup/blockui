@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.47 (28-SEP-2012)
+ * Version 2.48 (01-OCT-2012)
  * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -479,7 +479,7 @@
 				return;
 
 			// bind anchors and inputs for mouse and key events
-			var events = 'mousedown mouseup keydown keypress';
+			var events = 'mousedown mouseup keydown keypress touchstart touchend touchmove';
 			if (b)
 				$(document).bind(events, opts, handler);
 			else
