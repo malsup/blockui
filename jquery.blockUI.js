@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.49 (03-OCT-2012)
+ * Version 2.50 (04-OCT-2012)
  * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -77,7 +77,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.49; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.50; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -464,8 +464,9 @@
 				opts.onUnblock(el,opts);
 
 			// fix issue in Safari 6 where block artifacts remain until reflow
-			var body = $(document.body), w = body.width();
+			var body = $(document.body), w = body.width(), cssW = body[0].style.width;
 			body.width(w-1).width(w);
+			body[0].style.width = cssW;
 		}
 
 		// bind/unbind the handler
