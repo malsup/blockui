@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.50 (04-OCT-2012)
+ * Version 2.51 (23-OCT-2012)
  * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -77,7 +77,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.50; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.51; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -191,6 +191,10 @@
 			//	onUnblock(element, options)
 			onUnblock: null,
 
+			// callback method invoked when the overlay area is clicked.
+			// setting this will turn the cursor to a pointer, otherwise cursor defined in overlayCss will be used.
+			onOverlayClick: null,
+
 			// don't ask; if you really must know: http://groups.google.com/group/jquery-en/browse_thread/thread/36640a8730503595/2f6a79a77a78e493#2f6a79a77a78e493
 			quirksmodeOffsetHack: 4,
 
@@ -217,6 +221,9 @@
 
 			opts.overlayCSS = $.extend({}, $.blockUI.defaults.overlayCSS, opts.overlayCSS || {});
 			css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
+			if (opts.onOverlayClick)
+				opts.overlayCSS.cursor = 'pointer';
+
 			themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
 			msg = msg === undefined ? opts.message : msg;
 
@@ -510,12 +517,16 @@
 				}
 			}
 			var opts = e.data;
+			var target = $(e.target);
+			if (target.hasClass('blockOverlay') && opts.onOverlayClick)
+				opts.onOverlayClick();
+
 			// allow events within the message content
-			if ($(e.target).parents('div.' + opts.blockMsgClass).length > 0)
+			if (target.parents('div.' + opts.blockMsgClass).length > 0)
 				return true;
 
 			// allow events for content that is not being blocked
-			return $(e.target).parents().children().filter('div.blockUI').length === 0;
+			return target.parents().children().filter('div.blockUI').length === 0;
 		}
 
 		function focus(back) {
