@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.51 (23-OCT-2012)
+ * Version 2.52 (31-OCT-2012)
  * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -77,7 +77,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.51; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.52; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -439,6 +439,10 @@
 				els = $('body').children().filter('.blockUI').add('body > .blockUI');
 			else
 				els = $el.find('>.blockUI');
+
+			// fix cursor issue
+			if( els.length > 1 )
+				els[1].style.cursor = 'default';
 
 			if (full)
 				pageBlock = pageBlockEls = null;
