@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.52 (31-OCT-2012)
+ * Version 2.53 (01-NOV-2012)
  * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -77,7 +77,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.52; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.53; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -115,9 +115,13 @@
 			// styles for the overlay
 			overlayCSS:  {
 				backgroundColor:	'#000',
-				opacity:			0.6,
+				opacity:				0.6,
 				cursor:				'wait'
 			},
+
+			// style to replace wait cursor before unblocking to correct issue
+			// of lingering wait cursor
+			cursorReset: 'default',
 
 			// styles applied when using $.growlUI
 			growlCSS: {
@@ -441,8 +445,12 @@
 				els = $el.find('>.blockUI');
 
 			// fix cursor issue
-			if( els.length > 1 )
-				els[1].style.cursor = 'default';
+			if ( opts.cursorReset ) {
+				if ( els.length > 1 )
+					els[1].style.cursor = opts.cursorReset;
+				if ( els.length > 2 )
+					els[2].style.cursor = opts.cursorReset;
+			}
 
 			if (full)
 				pageBlock = pageBlockEls = null;
