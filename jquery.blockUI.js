@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.53 (01-NOV-2012)
+ * Version 2.54 (17-DEC-2012)
  * @requires jQuery v1.3 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -77,7 +77,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.53; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.54; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -115,7 +115,7 @@
 			// styles for the overlay
 			overlayCSS:  {
 				backgroundColor:	'#000',
-				opacity:				0.6,
+				opacity:			0.6,
 				cursor:				'wait'
 			},
 
@@ -503,7 +503,7 @@
 				return;
 
 			// bind anchors and inputs for mouse and key events
-			var events = 'mousedown mouseup keydown keypress touchstart touchend touchmove';
+			var events = 'mousedown mouseup keydown keypress keyup touchstart touchend touchmove';
 			if (b)
 				$(document).bind(events, opts, handler);
 			else
