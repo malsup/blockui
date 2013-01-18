@@ -1,10 +1,10 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.54 (17-DEC-2012)
- * @requires jQuery v1.3 or later
+ * Version 2.55 (18-JAN-2013)
+ * @requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/
- * Copyright (c) 2007-2012 M. Alsup
+ * Copyright (c) 2007-2013 M. Alsup
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
@@ -63,8 +63,10 @@
 			});
 
 			return this.each(function() {
-				if ($.css(this,'position') == 'static')
+				if ($.css(this,'position') == 'static') {
 					this.style.position = 'relative';
+					$(this).data('blockUI.static', true);
+				}
 				this.style.zoom = 1; // force 'hasLayout' in ie
 				install(this, opts);
 			});
@@ -77,7 +79,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.54; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.55; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -465,6 +467,7 @@
 
 		// move blocking element back into the DOM where it started
 		function reset(els,data,opts,el) {
+			var $el = $(el);
 			els.each(function(i,o) {
 				// remove via DOM calls so we don't lose event handlers
 				if (this.parentNode)
@@ -477,6 +480,10 @@
 				if (data.parent)
 					data.parent.appendChild(data.el);
 				$(el).removeData('blockUI.history');
+			}
+
+			if ($el.data('blockUI.static')) {
+				$el.css('position', 'static'); // #22
 			}
 
 			if (typeof opts.onUnblock == 'function')
