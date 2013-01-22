@@ -16,12 +16,6 @@
 "use strict";
 
 	function setup($) {
-		if (/^1\.(0|1|2)/.test($.fn.jquery)) {
-			/*global alert:true */
-			alert('blockUI requires jQuery v1.3 or later!  You are using v' + $.fn.jquery);
-			return;
-		}
-
 		$.fn._fadeIn = $.fn.fadeIn;
 
 		var noOp = $.noop || function() {};
@@ -479,7 +473,7 @@
 				data.el.style.position = data.position;
 				if (data.parent)
 					data.parent.appendChild(data.el);
-				$(el).removeData('blockUI.history');
+				$el.removeData('blockUI.history');
 			}
 
 			if ($el.data('blockUI.static')) {
