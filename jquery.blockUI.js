@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.55 (18-JAN-2013)
+ * Version 2.55.0-2013.01.22
  * @requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/

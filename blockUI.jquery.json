@@ -24,9 +24,9 @@
     }
   ],
   "bugs": "https://github.com/malsup/blockui/issues",
-  "homepage": "http://jquery.malsup.com/blockui/",
-  "docs": "http://jquery.malsup.com/blockui/",
-  "download": "http://malsup.github.com/jquery.blockui.js",
+  "homepage": "http://jquery.malsup.com/block/",
+  "docs": "http://jquery.malsup.com/block/",
+  "download": "http://malsup.github.com/jquery.blockUI.js",
   "dependencies": {
     "jquery": ">=1.7"
   }
