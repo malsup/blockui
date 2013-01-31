@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.55.0-2013.01.22
+ * Version 2.56.0-2013.01.31
  * @requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -23,7 +23,7 @@
 		// this bit is to ensure we don't call setExpression when we shouldn't (with extra muscle to handle
 		// retarded userAgent strings on Vista)
 		var msie = /MSIE/.test(navigator.userAgent);
-		var ie6  = /MSIE 6.0/.test(navigator.userAgent);
+		var ie6  = /MSIE 6.0/.test(navigator.userAgent) && ! /MSIE 8.0/.test(navigator.userAgent);
 		var mode = document.documentMode || 0;
 		// var setExpr = msie && (($.browser.version < 8 && !mode) || mode < 8);
 		var setExpr = $.isFunction( document.createElement('div').style.setExpression );
@@ -73,7 +73,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.55; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.56; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
