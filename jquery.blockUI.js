@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.56.0-2013.01.31
+ * Version 2.57.0-2013.02.17
  * @requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -13,6 +13,7 @@
  */
 
 ;(function() {
+/*jshint eqeqeq:false curly:false latedef:false */
 "use strict";
 
 	function setup($) {
@@ -73,7 +74,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.56; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.57; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
