@@ -17,7 +17,21 @@
 "use strict";
 
 	function setup($) {
-		$.fn._fadeIn = $.fn.fadeIn;
+		var islteIE8 = (($.browser.msie)&&(parseFloat($.browser.version) < 9));
+		$.fn._blockUIFadeIn = function(speed, callback) {
+			$(this).fadeIn(speed, function() {
+				if (islteIE8) { $(this).get(0).style.removeAttribute('filter'); }
+				if(callback !== undefined) { callback(); }				
+			}
+			
+		}
+		$.fn._blockUIFadeOut = function(speed, callback) {
+			$(this).fadeOut(speed, function() {
+				if (islteIE8) { $(this).get(0).style.removeAttribute('filter'); }
+				if(callback !== undefined) { callback(); }				
+			}		
+		}		
+		
 
 		var noOp = $.noop || function() {};
 
@@ -380,9 +394,9 @@
 				var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
 				var cb2 = msg ? cb : noOp;
 				if (opts.showOverlay)
-					lyr2._fadeIn(opts.fadeIn, cb1);
+					lyr2._blockUIFadeIn(opts.fadeIn, cb1);
 				if (msg)
-					lyr3._fadeIn(opts.fadeIn, cb2);
+					lyr3._blockUIFadeIn(opts.fadeIn, cb2);
 			}
 			else {
 				if (opts.showOverlay)
@@ -453,7 +467,7 @@
 				pageBlock = pageBlockEls = null;
 
 			if (opts.fadeOut) {
-				els.fadeOut(opts.fadeOut);
+				els._blockUIFadeOut(opts.fadeOut);
 				setTimeout(function() { reset(els,data,opts,el); }, opts.fadeOut);
 			}
 			else
