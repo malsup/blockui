@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.58.0-2013.04.04
+ * Version 2.59.0-2013.04.05
  * @requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -81,7 +81,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.58; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.59; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
@@ -512,7 +512,7 @@
 			$el.data('blockUI.isBlocked', b);
 
 			// don't bind events when overlay is not in use or if bindEvents is false
-			if (!opts.bindEvents || (b && !opts.showOverlay))
+			if (!full || !opts.bindEvents || (b && !opts.showOverlay))
 				return;
 
 			// bind anchors and inputs for mouse and key events
