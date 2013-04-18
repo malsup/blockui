@@ -22,7 +22,7 @@
 		var noOp = $.noop || function() {};
 
 		// this bit is to ensure we don't call setExpression when we shouldn't (with extra muscle to handle
-		// retarded userAgent strings on Vista)
+		// confusing userAgent strings on Vista)
 		var msie = /MSIE/.test(navigator.userAgent);
 		var ie6  = /MSIE 6.0/.test(navigator.userAgent) && ! /MSIE 8.0/.test(navigator.userAgent);
 		var mode = document.documentMode || 0;
