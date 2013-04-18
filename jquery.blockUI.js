@@ -185,6 +185,9 @@
 			// if true, focus will be placed in the first available input field when
 			// page blocking
 			focusInput: true,
+            
+            // elements that can receive focus
+            focusableElements: ':input:enabled:visible',
 
 			// suppresses the use of overlay styles on FF/Linux (due to performance issues with opacity)
 			// no longer needed in 2012
@@ -405,7 +408,7 @@
 
 			if (full) {
 				pageBlock = lyr3[0];
-				pageBlockEls = $(':input:enabled:visible',pageBlock);
+				pageBlockEls = $(opts.focusableElements,pageBlock);
 				if (opts.focusInput)
 					setTimeout(focus, 20);
 			}
