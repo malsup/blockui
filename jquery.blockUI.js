@@ -38,11 +38,11 @@
 			if (title) $m.append('<h1>'+title+'</h1>');
 			if (message) $m.append('<h2>'+message+'</h2>');
 			if (timeout === undefined) timeout = 3000;
-			
+
 			// Added by konapun: Set timeout to 30 seconds if this growl is moused over, like normal toast notifications
 			var callBlock = function(opts) {
 				opts = opts || {};
-				
+
 				$.blockUI({
 					message: $m,
 					fadeIn : typeof opts.fadeIn  !== 'undefined' ? opts.fadeIn  : 700,
@@ -54,7 +54,7 @@
 					css: $.blockUI.defaults.growlCSS
 				});
 			};
-			
+
 			callBlock();
 			var nonmousedOpacity = $m.css('opacity');
 			$m.mouseover(function() {
@@ -62,7 +62,7 @@
 					fadeIn: 0,
 					timeout: 30000
 				});
-				
+
 				var displayBlock = $('.blockMsg');
 				displayBlock.stop(); // cancel fadeout if it has started
 				displayBlock.fadeTo(300, 1); // make it easier to read the message by removing transparency
@@ -71,7 +71,7 @@
 			});
 			// End konapun additions
 		};
-		
+
 		// plugin method for blocking element content
 		$.fn.block = function(opts) {
 			if ( this[0] === window ) {
@@ -211,7 +211,7 @@
 			// if true, focus will be placed in the first available input field when
 			// page blocking
 			focusInput: true,
-            
+
             // elements that can receive focus
             focusableElements: ':input:enabled:visible',
 
@@ -313,7 +313,7 @@
 				s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+(z+10)+';display:none;position:absolute">';
 				if ( opts.title ) {
 					s += '<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>';
-				}  
+				}
 				s += '<div class="ui-widget-content ui-dialog-content"></div>';
 				s += '</div>';
 			}
@@ -491,7 +491,7 @@
 
 			if (opts.fadeOut) {
 				count = els.length;
-				els.fadeOut(opts.fadeOut, function() { 
+				els.fadeOut(opts.fadeOut, function() {
 					if ( --count === 0)
 						reset(els,data,opts,el);
 				});
@@ -559,7 +559,7 @@
 		// event handler to suppress keyboard/mouse events when blocking
 		function handler(e) {
 			// allow tab navigation (conditionally)
-			if (e.keyCode && e.keyCode == 9) {
+			if (e.type === 'keydown' && e.keyCode && e.keyCode == 9) {
 				if (pageBlock && e.data.constrainTabKey) {
 					var els = pageBlockEls;
 					var fwd = !e.shiftKey && e.target === els[els.length-1];
