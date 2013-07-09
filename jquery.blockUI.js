@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.62.0-2013.07.01
+ * Version 2.63.0-2013.07.08
  * @requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -491,7 +491,7 @@
 
 			if (opts.fadeOut) {
 				count = els.length;
-				els.fadeOut(opts.fadeOut, function() {
+				els.stop().fadeOut(opts.fadeOut, function() {
 					if ( --count === 0)
 						reset(els,data,opts,el);
 				});
