@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.63.0-2013.07.08
+ * Version 2.64.0-2013.07.18
  * @requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -503,6 +503,9 @@
 		// move blocking element back into the DOM where it started
 		function reset(els,data,opts,el) {
 			var $el = $(el);
+			if ( $el.data('blockUI.isBlocked') )
+				return;
+
 			els.each(function(i,o) {
 				// remove via DOM calls so we don't lose event handlers
 				if (this.parentNode)
