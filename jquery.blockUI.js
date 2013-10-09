@@ -576,7 +576,7 @@
 			var opts = e.data;
 			var target = $(e.target);
 			if (target.hasClass('blockOverlay') && opts.onOverlayClick)
-				opts.onOverlayClick();
+				opts.onOverlayClick(e);
 
 			// allow events within the message content
 			if (target.parents('div.' + opts.blockMsgClass).length > 0)
