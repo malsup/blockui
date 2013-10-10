@@ -1,6 +1,6 @@
 /*!
  * jQuery blockUI plugin
- * Version 2.65.0-2013.09.02
+ * Version 2.66.0-2013.10.09
  * Requires jQuery v1.7 or later
  *
  * Examples at: http://malsup.com/jquery/block/
@@ -107,7 +107,7 @@
 			});
 		};
 
-		$.blockUI.version = 2.65; // 2nd generation blocking at no extra cost!
+		$.blockUI.version = 2.66; // 2nd generation blocking at no extra cost!
 
 		// override these in your code to change the default behavior and style
 		$.blockUI.defaults = {
