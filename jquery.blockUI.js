@@ -426,7 +426,7 @@
 				if (msg)
 					lyr3.show();
 				if (opts.onBlock)
-					opts.onBlock();
+					opts.onBlock.bind(lyr3)();
 			}
 
 			// bind key and mouse events
