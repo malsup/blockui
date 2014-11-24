@@ -83,6 +83,8 @@
 				var $el = $(this);
 				if (fullOpts.ignoreIfBlocked && $el.data('blockUI.isBlocked'))
 					return;
+                if (fullOpts.blockCounting)
+                    return;
 				$el.unblock({ fadeOut: 0 });
 			});
 
@@ -118,6 +120,8 @@
 			draggable: true,	// only used when theme == true (requires jquery-ui.js to be loaded)
 
 			theme: false, // set to true to use with jQuery UI themes
+            
+            blockCounting: false,
 
 			// styles for the message when blocking; if you wish to disable
 			// these and use an external stylesheet then do this in your code:
@@ -256,6 +260,15 @@
 			if (opts.ignoreIfBlocked && $(el).data('blockUI.isBlocked'))
 				return;
 
+            if (opts.blockCounting) {
+                var blockCount = $(el).data('blockUI.blockCount');
+                if (blockCount == undefined) blockCount = 0;
+                blockCount++;
+                $(el).data('blockUI.blockCount', blockCount);
+                if (blockCount > 1)
+                    return;
+            }
+                
 			opts.overlayCSS = $.extend({}, $.blockUI.defaults.overlayCSS, opts.overlayCSS || {});
 			css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
 			if (opts.onOverlayClick)
@@ -465,6 +478,16 @@
 				$el.removeData('blockUI.timeout');
 			}
 			opts = $.extend({}, $.blockUI.defaults, opts || {});
+            
+            if (opts.blockCounting) {
+                var blockCount = $(el).data('blockUI.blockCount');
+                if (blockCount == undefined) blockCount = 0;
+                else blockCount--;
+                $(el).data('blockUI.blockCount', blockCount);
+                if (blockCount > 0)
+                    return;
+            }
+            
 			bind(0, el, opts); // unbind events
 
 			if (opts.onUnblock === null) {
