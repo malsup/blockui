@@ -515,6 +515,7 @@
 			if (data && data.el) {
 				data.el.style.display = data.display;
 				data.el.style.position = data.position;
+				data.el.style.cursor = 'default'; // #59
 				if (data.parent)
 					data.parent.appendChild(data.el);
 				$el.removeData('blockUI.history');
