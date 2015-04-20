@@ -611,9 +611,14 @@
 
 
 	/*global define:true */
-	if (typeof define === 'function' && define.amd && define.amd.jQuery) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
 		define(['jquery'], setup);
+	} else if (typeof exports === 'object') {
+		// Node/CommonJS
+		setup(require('jquery'));
 	} else {
+		// Browser globals
 		setup(jQuery);
 	}
 

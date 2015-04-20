@@ -1,4 +1,6 @@
-# BlockUI - Page or element overlay
+# BlockUI - Page or element overlay  [![NPM version][npm-image]][npm-url]
+
+### NOTE: This is a fork from the official version, for publishing on npm. See https://github.com/malsup/blockui/pull/114
 
 ## Getting Started
 Download either the [production version][min] or the [development version][max] of BlockUI.
@@ -8,21 +10,21 @@ Download either the [production version][min] or the [development version][max] 
 
 In your web page:
 
-<pre>
-&lt;!-- include jQuery -->
-&lt;script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js">&lt;/script>
-&lt;!-- include BlockUI -->
-&lt;script src="http://path/to/your/copy/of/jquery.blockUI.js">&lt;/script>
-&lt;script>
-// invoke blockUI as needed -->
+```html
+<!-- include jQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+<!-- include BlockUI -->
+<script src="http://path/to/your/copy/of/jquery.blockUI.js"></script>
+<script>
+// invoke blockUI as needed
 $(document).on('click', '#myButton', function() {
    $.blockUI();
 });
->&lt;/script>
-</pre>
+</script>
+```
 
 ## Documentation, Demos and FAQ
-Everything you need to know can be found here: 
+Everything you need to know can be found here:
 [http://jquery.malsup.com/block/](http://jquery.malsup.com/block/)
 
 
@@ -36,3 +38,6 @@ You may use either license.  The MIT license is recommended for most projects be
 If the GPL suits your project better you are also free to use the plugin under that license.
 
 You do not have to do anything special to choose one license or the other and you don't have to notify anyone which license you are using. You are free to use the BlockUI plugin in commercial projects as long as the copyright header is left intact.
+
+[npm-url]: https://www.npmjs.com/package/block-ui/
+[npm-image]: http://img.shields.io/npm/v/block-ui.svg
