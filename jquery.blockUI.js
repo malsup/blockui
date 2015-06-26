@@ -465,7 +465,6 @@
 				$el.removeData('blockUI.timeout');
 			}
 			opts = $.extend({}, $.blockUI.defaults, opts || {});
-			bind(0, el, opts); // unbind events
 
 			if (opts.onUnblock === null) {
 				opts.onUnblock = $el.data('blockUI.onUnblock');
@@ -502,6 +501,7 @@
 
 		// move blocking element back into the DOM where it started
 		function reset(els,data,opts,el) {
+			bind(0, el, opts); // unbind events
 			var $el = $(el);
 			if ( $el.data('blockUI.isBlocked') )
 				return;
