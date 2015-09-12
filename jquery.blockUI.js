@@ -291,8 +291,11 @@
 			// layer2 is the overlay layer which has opacity and a wait cursor (by default)
 			// layer3 is the message content that is displayed while blocking
 			var lyr1, lyr2, lyr3, s;
-			if (msie || opts.forceIframe)
-				lyr1 = $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>');
+			if (msie || opts.forceIframe) {
+			    lyr1 = $('<iframe class="blockUI" style="z-index:' + (z++) + ';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0"></iframe>');
+			    if (opts.iframeSrc)
+			        lyr1.attr("src", opts.iframeSrc);
+			}
 			else
 				lyr1 = $('<div class="blockUI" style="display:none"></div>');
 
