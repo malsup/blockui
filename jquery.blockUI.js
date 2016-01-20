@@ -358,14 +358,15 @@
 			}
 
 			// ie7 must use absolute positioning in quirks mode and to account for activex issues (when scrolling)
-			var expr = setExpr && (!$.support.boxModel || $('object,embed', full ? null : el).length > 0);
+			var isBoxModel = document.compatMode === "CSS1Compat";
+			var expr = setExpr && (!isBoxModel || $('object,embed', full ? null : el).length > 0);
 			if (ie6 || expr) {
 				// give body 100% height
-				if (full && opts.allowBodyStretch && $.support.boxModel)
+				if (full && opts.allowBodyStretch && isBoxModel)
 					$('html,body').css('height','100%');
 
 				// fix ie6 issue when blocked element has a border width
-				if ((ie6 || !$.support.boxModel) && !full) {
+				if ((ie6 || !isBoxModel) && !full) {
 					var t = sz(el,'borderTopWidth'), l = sz(el,'borderLeftWidth');
 					var fixT = t ? '(0 - '+t+')' : 0;
 					var fixL = l ? '(0 - '+l+')' : 0;
@@ -377,11 +378,11 @@
 					s.position = 'absolute';
 					if (i < 2) {
 						if (full)
-							s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (jQuery.support.boxModel?0:'+opts.quirksmodeOffsetHack+') + "px"');
+							s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (document.compatMode === "CSS1Compat"?0:'+opts.quirksmodeOffsetHack+') + "px"');
 						else
 							s.setExpression('height','this.parentNode.offsetHeight + "px"');
 						if (full)
-							s.setExpression('width','jQuery.support.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"');
+							s.setExpression('width','document.compatMode === "CSS1Compat" && document.documentElement.clientWidth || document.body.clientWidth + "px"');
 						else
 							s.setExpression('width','this.parentNode.offsetWidth + "px"');
 						if (fixL) s.setExpression('left', fixL);
