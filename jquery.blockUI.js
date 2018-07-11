@@ -416,9 +416,9 @@
 				var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
 				var cb2 = msg ? cb : noOp;
 				if (opts.showOverlay)
-					lyr2._fadeIn(opts.fadeIn, cb1);
+					lyr2._fadeIn(opts.fadeIn, cb1.bind(lyr2, el, opts));
 				if (msg)
-					lyr3._fadeIn(opts.fadeIn, cb2);
+					lyr3._fadeIn(opts.fadeIn, cb2.bind(lyr3, el, opts));
 			}
 			else {
 				if (opts.showOverlay)
@@ -426,7 +426,7 @@
 				if (msg)
 					lyr3.show();
 				if (opts.onBlock)
-					opts.onBlock.bind(lyr3)();
+					opts.onBlock.call(lyr3, el, opts);
 			}
 
 			// bind key and mouse events
