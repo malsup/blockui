@@ -17,6 +17,9 @@
 "use strict";
 
 	function setup($) {
+		var migrateDeduplicateWarnings = jQuery.migrateDeduplicateWarnings || false;
+		jQuery.migrateDeduplicateWarnings = false;
+
 		$.fn._fadeIn = $.fn.fadeIn;
 
 		var noOp = $.noop || function() {};
@@ -26,7 +29,7 @@
 		var msie = /MSIE/.test(navigator.userAgent);
 		var ie6  = /MSIE 6.0/.test(navigator.userAgent) && ! /MSIE 8.0/.test(navigator.userAgent);
 		var mode = document.documentMode || 0;
-		var setExpr = $.isFunction( document.createElement('div').style.setExpression );
+		var setExpr = "function" === typeof document.createElement('div').style.setExpression;
 
 		// global $ methods for blocking/unblocking the entire page
 		$.blockUI   = function(opts) { install(window, opts); };
@@ -57,7 +60,7 @@
 
 			callBlock();
 			var nonmousedOpacity = $m.css('opacity');
-			$m.mouseover(function() {
+			$m.on('mouseover', function() {
 				callBlock({
 					fadeIn: 0,
 					timeout: 30000
@@ -66,7 +69,7 @@
 				var displayBlock = $('.blockMsg');
 				displayBlock.stop(); // cancel fadeout if it has started
 				displayBlock.fadeTo(300, 1); // make it easier to read the message by removing transparency
-			}).mouseout(function() {
+			}).on('mouseout', function() {
 				$('.blockMsg').fadeOut(1000);
 			});
 			// End konapun additions
@@ -358,14 +361,14 @@
 			}
 
 			// ie7 must use absolute positioning in quirks mode and to account for activex issues (when scrolling)
-			var expr = setExpr && (!$.support.boxModel || $('object,embed', full ? null : el).length > 0);
+			var expr = setExpr && ( "CSS1Compat" !== document.compatMode || $('object,embed', full ? null : el).length > 0);
 			if (ie6 || expr) {
 				// give body 100% height
-				if (full && opts.allowBodyStretch && $.support.boxModel)
+				if (full && opts.allowBodyStretch && "CSS1Compat" === document.compatMode)
 					$('html,body').css('height','100%');
 
 				// fix ie6 issue when blocked element has a border width
-				if ((ie6 || !$.support.boxModel) && !full) {
+				if ((ie6 || "CSS1Compat" !== document.compatMode) && !full) {
 					var t = sz(el,'borderTopWidth'), l = sz(el,'borderLeftWidth');
 					var fixT = t ? '(0 - '+t+')' : 0;
 					var fixL = l ? '(0 - '+l+')' : 0;
@@ -377,11 +380,11 @@
 					s.position = 'absolute';
 					if (i < 2) {
 						if (full)
-							s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (jQuery.support.boxModel?0:'+opts.quirksmodeOffsetHack+') + "px"');
+							s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - ("CSS1Compat" === document.compatMode?0:'+opts.quirksmodeOffsetHack+') + "px"');
 						else
 							s.setExpression('height','this.parentNode.offsetHeight + "px"');
 						if (full)
-							s.setExpression('width','jQuery.support.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"');
+							s.setExpression('width','"CSS1Compat" === document.compatMode && document.documentElement.clientWidth || document.body.clientWidth + "px"');
 						else
 							s.setExpression('width','this.parentNode.offsetWidth + "px"');
 						if (fixL) s.setExpression('left', fixL);
@@ -551,9 +554,9 @@
 			// bind anchors and inputs for mouse and key events
 			var events = 'mousedown mouseup keydown keypress keyup touchstart touchend touchmove';
 			if (b)
-				$(document).bind(events, opts, handler);
+				$(document).on(events, opts, handler);
 			else
-				$(document).unbind(events, handler);
+				$(document).off(events, handler);
 
 		// former impl...
 		//		var $e = $('a,:input');
@@ -606,7 +609,7 @@
 		function sz(el, p) {
 			return parseInt($.css(el,p),10)||0;
 		}
-
+		jQuery.migrateDeduplicateWarnings = migrateDeduplicateWarnings;
 	}
 
 
