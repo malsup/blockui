@@ -3,8 +3,8 @@
 ## Getting Started
 Download either the [production version][min] or the [development version][max] of BlockUI.
 
-[min]: http://malsup.github.com/min/jquery.blockUI.min.js
-[max]: http://malsup.github.com/jquery.blockUI.js
+[min]: https://malsup.github.io/min/jquery.blockUI.min.js
+[max]: https://malsup.github.io/jquery.blockUI.js
 
 In your web page:
 
@@ -23,13 +23,12 @@ $(document).on('click', '#myButton', function() {
 
 ## Documentation, Demos and FAQ
 Everything you need to know can be found here: 
-[http://jquery.malsup.com/block/](http://jquery.malsup.com/block/)
-
+[https://jquery.malsup.com/block/](https://jquery.malsup.com/block/)
 
 ## Copyright and License
 Copyright &copy; 2007-2013 M. Alsup.
 
-The BlockUI plugin is dual licensed under the [MIT](http://malsup.github.com/mit-license.txt) and [GPL](http://malsup.github.com/gpl-license-v2.txt) licenses.
+The BlockUI plugin is dual licensed under the [MIT](https://malsup.github.io/mit-license.txt) and [GPL](https://malsup.github.io/gpl-license-v2.txt) licenses.
 
 You may use either license.  The MIT license is recommended for most projects because it is simple and easy to understand and it places almost no restrictions on what you can do with the plugin.
 
